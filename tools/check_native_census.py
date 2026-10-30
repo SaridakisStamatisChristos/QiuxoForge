@@ -8,6 +8,7 @@ import argparse
 import json
 from math import comb
 from pathlib import Path
+from structural_orbit_bounds import coefficient
 
 REFERENCE = {
     5: {
@@ -78,6 +79,8 @@ def validate_native(doc: dict, cap: int) -> None:
             raise AssertionError("unique objective is not a subset")
         if row["reachable_states"] > 2 * comb(25, index) * (2 ** index):
             raise AssertionError("raw state exceeds structural upper bound")
+        if row["d4_orbits"] > coefficient(index):
+            raise AssertionError("reachability D4 classes exceed proved Burnside upper bound")
     for field in KEYS:
         if doc[field] != sum(row[field] for row in rows):
             raise AssertionError(f"non-additive total: {field}")
