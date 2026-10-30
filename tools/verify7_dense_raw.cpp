@@ -82,7 +82,7 @@ int main(int argc,char**argv){
   q.reserve(cap==7?120000000ULL:cap==6?20000000ULL:3000000ULL);
   q.push_back(0);add(0);
   std::array<int8_t,25> b{},next{};
-  U layer[8]{},terminal[8]{},candidate=0,retained=0;
+  U layer[8]{},terminal[8]{},win_raw[8]{},unique_raw[8]{},candidate=0,retained=0;
   auto start=std::chrono::steady_clock::now();
   for(size_t j=0;j<q.size();j++){
    U code=q[j];bool turn=(code>>50)&1;
@@ -92,35 +92,55 @@ int main(int argc,char**argv){
    layer[k]++;
    if(winner(b,turn)!=0){terminal[k]++;continue;}
    int current=turn?-1:1;
+   int own_marks=0,winning_actions=0;
+   for(int8_t v:b)own_marks+=(v==current);
    for(const M&m:moves){
     if(b[m.cell]!=0&&b[m.cell]!=current)continue;
     candidate++;
-    if(k==cap&&b[m.cell]==0)continue;
-    retained++;
+    const bool in_domain=!(k==cap&&b[m.cell]==0);
+    if(own_marks<4&&!in_domain)continue;
     next=b;
     for(int t=0;t<m.length;t++)
       next[m.cell+t*m.step]=b[m.cell+(t+1)*m.step];
     next[m.cell+m.length*m.step]=current;
+    // Crucial: also inspect winning actions that ADD a new cube at cap.
+    // Their successor is outside the reachable-root cap but remains a
+    // valid tactical solution for this root.
+    if(own_marks>=4&&winner(next,!turn)==current)winning_actions++;
+    if(!in_domain)continue;
+    retained++;
     auto [idx,packed]=encode_rank(next,!turn);
     if(add(idx)){
       if(q.size()>=budget)throw std::runtime_error("raw state budget reached: incomplete");
       q.push_back(packed);
     }
    }
+   if(winning_actions){
+     win_raw[k]++;
+     if(winning_actions==1)unique_raw[k]++;
+   }
    if(j&&j%20000000==0)
      std::cerr<<"raw verified "<<j<<" states; discovered "<<q.size()<<"\n";
   }
   constexpr U EXPECT[8]={1,16,468,11812,187164,2055382,16353436,99693740};
   constexpr U TERMINALS[8]={0,0,0,0,0,0,552,15748};
+  constexpr U WIN_RAW[8]={0,0,0,0,0,936,29140,480424};
+  constexpr U UNIQUE_RAW[8]={0,0,0,0,0,360,9508,161920};
   for(int k=0;k<=cap;k++){
    if(layer[k]!=EXPECT[k])throw std::runtime_error("independent raw occupancy mismatch");
    if(terminal[k]!=TERMINALS[k])throw std::runtime_error("independent raw terminal mismatch");
+   if(win_raw[k]!=WIN_RAW[k])throw std::runtime_error("independent raw winning positions mismatch");
+   if(unique_raw[k]!=UNIQUE_RAW[k])throw std::runtime_error("independent raw unique positions mismatch");
   }
   std::cout<<"{\"schema\":1,\"cap\":"<<cap<<",\"raw_states\":"<<q.size()<<",\"by_occupancy\":[";
   for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<layer[k];}
   std::cout<<"],\"terminal_by_occupancy\":[";
   for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<terminal[k];}
-  std::cout<<"],\"candidate_edges\":"<<candidate<<",\"retained_edges\":"<<retained
+  std::cout<<"],\\"win_in_one_by_occupancy\\":[";
+  for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<win_raw[k];}
+  std::cout<<"],\\"unique_win_in_one_by_occupancy\\":[";
+  for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<unique_raw[k];}
+  std::cout<<"],\\"candidate_edges\\":"<<candidate<<",\\"retained_edges\\":"<<retained
    <<",\"structural_bits\":"<<bits
    <<",\"seconds\":"<<std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count()<<"}\n";
  }catch(const std::exception&e){std::cerr<<"ERROR: "<<e.what()<<"\n";return 2;}
