@@ -141,4 +141,6 @@ See [formal results, claims and reproduction gates](docs/CENSUS_5X5_R7_V14.md). 
 
 An independent attacker/defender/attacker census over all ≤7-mark roots has also certified **370 new forced-win-in-exactly-three puzzle classes**, of which **64** have exactly one forcing first action. All 370 positive complete-branch certificates passed a separate pure tuple-array verifier; the all-negative census relies on the exhaustive native search.
 
+Existing Quixo tiering and strong-solving research predates this project (Tanaka et al., *Quixo Is Solved*, 2020; Robert Shi, Berkeley UCB/EECS-2024-139, 2024, Chapter 7.2). The novelty claim is limited to our particular *reachable tactical puzzle census and independently reproduced counts*; the two-color tier partition is **prior art**, not an invention of QuixoForge.
+
 The exact structural D4 generating function for all 25 occupancy layers is implemented in `tools/structural_orbit_bounds.py`. A proved two-color monotone recurrence that partitions the graph by X/O mark counts is documented at [Two-color layer saturation](docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md). Neither is a claim that the full global puzzle count has been computed.
