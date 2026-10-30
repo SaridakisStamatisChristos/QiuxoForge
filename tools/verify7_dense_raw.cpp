@@ -136,11 +136,11 @@ int main(int argc,char**argv){
   for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<layer[k];}
   std::cout<<"],\"terminal_by_occupancy\":[";
   for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<terminal[k];}
-  std::cout<<"],\\"win_in_one_by_occupancy\\":[";
+  std::cout<<"],\"win_in_one_by_occupancy\":[";
   for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<win_raw[k];}
-  std::cout<<"],\\"unique_win_in_one_by_occupancy\\":[";
+  std::cout<<"],\"unique_win_in_one_by_occupancy\":[";
   for(int k=0;k<=cap;k++){if(k)std::cout<<",";std::cout<<unique_raw[k];}
-  std::cout<<"],\\"candidate_edges\\":"<<candidate<<",\\"retained_edges\\":"<<retained
+  std::cout<<"],\"candidate_edges\":"<<candidate<<",\"retained_edges\":"<<retained
    <<",\"structural_bits\":"<<bits
    <<",\"seconds\":"<<std::chrono::duration<double>(std::chrono::steady_clock::now()-start).count()<<"}\n";
  }catch(const std::exception&e){std::cerr<<"ERROR: "<<e.what()<<"\n";return 2;}
