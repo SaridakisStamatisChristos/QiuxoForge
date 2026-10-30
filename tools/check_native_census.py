@@ -155,6 +155,10 @@ def validate_forced3(native: dict, oracle: dict) -> None:
         raise AssertionError("independent positive proof count disagrees")
     if oracle.get("unique_forcing_first_action_orbits") != 64:
         raise AssertionError("independent unique-first-action count disagrees")
+    if {str(k): v for k, v in oracle["forcing_first_action_histogram"].items()} != {
+        "1": 64, "2": 120, "3": 120, "4": 66
+    }:
+        raise AssertionError("independent complete first-action histogram disagrees")
 
 
 def main(argv=None) -> None:
