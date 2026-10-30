@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "cap": 8,
+  "raw_states": 603033221,
+  "by_occupancy": [
+    1,
+    16,
+    468,
+    11812,
+    187164,
+    2055382,
+    16353436,
+    99693740,
+    484731202
+  ],
+  "terminal_by_occupancy": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    552,
+    15748,
+    247248
+  ],
+  "win_in_one_by_occupancy": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    936,
+    29140,
+    480424,
+    5071268
+  ],
+  "unique_win_in_one_by_occupancy": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    360,
+    9508,
+    161920,
+    1777204
+  ],
+  "candidate_edges": 22219777004,
+  "retained_edges": 7896591036,
+  "structural_bits": 703338822,
+  "seconds": 1294.7,
+  "max_rss_kb": 2443136,
+  "method": "UNSYMMETRIZED exact 32-bit combinatorial rank; independent tuple-array legal moves, shifting and winner; all first moves checked, including cap-crossing tactical moves",
+  "evidence_state": "LOCAL_EXECUTION_PASSED; CI final-head verification pending"
+}
