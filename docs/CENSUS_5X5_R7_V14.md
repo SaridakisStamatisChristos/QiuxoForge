@@ -8,7 +8,7 @@ A **win-in-one puzzle** is a legally reachable nonterminal root position where t
 
 ## Exact enumerated domain and first-action classifications
 
-All numerical counts in this table are outputs of the native exhaustive D4 quotient BFS. The ≤6 raw reachable graph is separately reproduced by a tuple-array BFS; the seven-cube counts await an independent full seventh-layer implementation.
+All numerical counts in this table are outputs of the native exhaustive D4 quotient BFS. The entire ≤7 raw reachable graph and the one-ply winning-action classifications are separately reproduced by an unsymmetrized tuple-array BFS with collision-free combinatorial ranking.
 
 | Occupancy | Reachable raw states | Reachable D4 classes | Terminal D4 classes | Win-in-one D4 classes | Unique win-in-one D4 |
 |---:|---:|---:|---:|---:|---:|
@@ -42,7 +42,7 @@ The Python three-ply AND/OR solver in quixoforge.census5_forced3 is not a global
 
 ## Global mathematical bounds, and the unsolved census
 
-Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring classes; with both possible players to move, an upper bound of **211,836,900,942** board-turn classes, many unreachable. The native K≤7 census establishes at least **21,531 unique-win-in-one** geometric classes for the full game, contingent on the seven-cube calculation and correct rules. It does **not** determine the global exact number of reachable winning puzzles, all finite-depth puzzles, eventual unique wins, or subjectively meaningful human puzzles. Do not extrapolate percentages or label these counts the global answer.
+Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring classes; with both possible players to move, an upper bound of **211,836,900,942** board-turn classes, many unreachable. The independently reproduced K≤7 census establishes **21,531 unique-win-in-one** geometric classes as a rigorous computational lower bound for the full game, conditional on the documented rules and D4 group action. It does **not** determine the global exact number of reachable winning puzzles, all finite-depth puzzles, eventual unique wins, or subjectively meaningful human puzzles. Do not extrapolate percentages or label these counts the global answer.
 
 ## One-command reproducibility and evidence checks
 
@@ -67,11 +67,11 @@ Invalid occupancy caps or resource budgets fail instead of returning a misleadin
 |---|---|---|
 | 5×5 official board, move and terminal semantics | VERIFIED for K≤5 against independent Python implementation | Independent K6–7 terminal/first-action audit is still valuable |
 | Reachability K≤6 | VERIFIED by native D4 and independent raw tuple BFS | Exact only within declared occupancy |
-| Reachability K=7 | EMPIRICALLY VALIDATED by native exhaustive D4 BFS | No complete independent raw K7 BFS yet |
+| Reachability K=7 | VERIFIED via two independent exhaustive native graph traversals | Exact within the declared K≤7 domain only |
 | Immediate-win objective K≤5 | VERIFIED by multiple independently implemented paths | Does not imply eventual forced-win strategy |
-| Immediate-win objective K6–7 | EMPIRICALLY VALIDATED native output | Independent exhaustive tactical classification still open |
+| Immediate-win objective K6–7 | VERIFIED by independently classified raw winning-action counts and D4 partition | Still not eventual game-theoretic strategy |
 | Three-ply K≤5 roots | COMPUTED with fast preimage/AND-OR algorithm | CI and independent negative-certificate validation pending |
 | Global exact meaningful-puzzle total | UNVERIFIED | Operational puzzle-family definition and near-full occupancy enumeration still required |
 | Re-solving Quixo; GUI; auth/infra | N/A | Outside this headless research mission |
 
-This is a finite-domain census with explicit scope and replayable tooling, **not a claim of a solved global 5×5 puzzle census**.
+The raw seven-cube classifier is independently replicated and the full reproducibility command checks both engines. This is a finite-domain census with explicit scope, **not a claim of a solved global 5×5 puzzle census**.
