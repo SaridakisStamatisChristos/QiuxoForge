@@ -1,5 +1,21 @@
 # QuixoForge — complete finite-domain 5×5 census through eight occupied cubes (R7 v1.4)
 
+## Existing solution literature and novelty limits
+
+The original two-player 5×5 Quixo game was strongly solved by
+Tanaka et al. (*Quixo Is Solved*, 2020/2022,
+https://arxiv.org/abs/2007.15895).
+Robert Shi, *Parallel Solving of Two-Player Tierable Abstract
+Strategy Games* (U.C. Berkeley, 2024), Chapter 7.2,
+https://www2.eecs.berkeley.edu/Pubs/TechRpts/2024/EECS-2024-139.pdf,
+already describes the monotone (blank,X,O) tiers and their
+combinatorial hashing. **We do not claim to have invented Quixo tiering,
+combinatorial hashes, the solution to Quixo, or proof-number search.**
+This project's separate, more narrowly scoped research result is the
+independently reproduced **legally reachable, nonterminal, geometrically
+unique immediate-tactical puzzle census**, with additional complete
+three-ply positive certificates.
+
 ## Scientific contract
 
 The goal is counting mathematically distinct, meaningful, verifiable **standard two-player 5×5 Quixo puzzles**, not solving the game again. X begins on a blank board; each state records board markings and side to move. Histories stop immediately on a winning position. A first action is a selected eligible perimeter cube plus insertion end. D4 rotational/reflection equivalence preserves X/O and side to move; color exchange is **not** treated as an equivalence.
