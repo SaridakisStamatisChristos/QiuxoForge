@@ -125,6 +125,15 @@ separate Python tuple-array rules implementation and checks D4 orbit
 uniqueness. **All 370 positive root certificates independently passed**
 (5.88s, 104,208 KiB max RSS). The forcing first-action multiplicity
 histogram is 1:64, 2:120, 3:120, 4:66; weighted raw states total 2,880.
+A further independent check established that **all 370** have an
+**adaptive-response** property: there exist two different legal defender
+replies whose sets of winning final legal actions are *disjoint*.
+Consequently, no single fixed second attacker action wins against
+both replies. All **64 unique-first-action** classes share this
+property. The independently verified adaptive-first-action histogram
+is 1:64, 2:120, 3:120, 4:66. This is a stronger tactical definition
+than win-in-three alone, but it is not a human difficulty score.
+
 The exhaustive negative classification still depends on the separate
 native graph traversal, and final-head CI is a distinct release gate.
 
