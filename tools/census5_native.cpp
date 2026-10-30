@@ -85,15 +85,15 @@ inline S apply(S s,const Move& m){
  return {x,o,!s.turn};
 }
 struct Counts {
- U raw[8]{},orbits[8]{},terminal[8]{},terminalOrbits[8]{};
- U win1Raw[8]{},win1Orbits[8]{},uniq1Raw[8]{},uniq1Orbits[8]{};
+ U raw[9]{},orbits[9]{},terminal[9]{},terminalOrbits[9]{};
+ U win1Raw[9]{},win1Orbits[9]{},uniq1Raw[9]{},uniq1Orbits[9]{};
  U orbitSize[9]{},candidates=0,retained=0;
 };
 Counts solve(int cap,U maxorbits){
  Counts totals;
  // Zero is reserved for the empty hash slot. The only zero state is
  // the initial X-to-play empty board, already explicitly in the queue.
- const size_t HSIZE = (cap>=7?1ULL<<25:cap==6?1ULL<<23:cap==5?1ULL<<20:1ULL<<17);
+ const size_t HSIZE = (cap>=8?1ULL<<27:cap>=7?1ULL<<25:cap==6?1ULL<<23:cap==5?1ULL<<20:1ULL<<17);
  std::vector<U> tab(HSIZE,0);
  U count=1;
  auto insert=[&](U key)->bool{
@@ -110,7 +110,7 @@ Counts solve(int cap,U maxorbits){
    if(tab[pos]==key)return false;
    tab[pos]=key;count++;return true;
  };
- std::vector<U> queue;queue.reserve(cap>=7?16000000:cap==6?3000000:400000);
+ std::vector<U> queue;queue.reserve(cap>=8?80000000:cap>=7?16000000:cap==6?3000000:400000);
  queue.push_back(0);
  for(size_t p=0;p<queue.size();p++){
    S s=unpack(queue[p]);int k=stones(s.x|s.o),os=orbsize(s);
@@ -140,9 +140,9 @@ Counts solve(int cap,U maxorbits){
 int main(int argc,char**argv){
  try{
  int cap=argc>1?std::stoi(argv[1]):6;
- if(cap<0||cap>7)throw std::runtime_error("occupancy cap must be 0..7");
+ if(cap<0||cap>8)throw std::runtime_error("occupancy cap must be 0..8");
  U maxorbits=argc>2?std::stoull(argv[2]):20000000ULL;
- if(maxorbits<1||maxorbits>30000000ULL)throw std::runtime_error("orbit budget must be 1..30000000");
+ if(maxorbits<1||maxorbits>100000000ULL)throw std::runtime_error("orbit budget must be 1..100000000");
  setup();auto start=std::chrono::steady_clock::now();Counts C=solve(cap,maxorbits);
  U a=0,b=0,z=0,w=0,u=0,v=0,t=0,tt=0;
  std::cout<<"{\"schema\":1,\"cap\":"<<cap<<",\"occupancies\":[";
