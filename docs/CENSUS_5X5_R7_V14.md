@@ -83,6 +83,31 @@ See docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md for the proved
 exact two-dimensional fixed-point layer recurrence, which enables
 out-of-core or parallel census beyond the current RAM-limited regime.
 
+## New multi-ply seven-cube puzzle family
+
+An exhaustive local native attacker/defender/attacker AND/OR classifier
+(`tools/census5_force3_native.cpp`) has independently examined all
+14,807,130 reachable geometric root classes at occupancy <=7 and
+identified **370** geometrically distinct **new forcing-win-by-three**
+puzzle classes (2,880 raw board/turn states). These exclude roots with
+any immediate winning legal action. **64** of the 370 classes (512 raw
+states) have exactly one forcing first legal action.
+
+For every candidate forcing action, the attacker must win after every
+defender response within three plies; neither defender nor attacker
+continuations are occupancy-capped. The native enumerator emits the
+complete 370 geometric root bitmasks with the claimed number of
+forcing first actions; `tools/verify_force3_positives.py`
+independently replays every first/defense/final action using a completely
+separate Python tuple-array rules implementation and checks D4 orbit
+uniqueness. The **370 / 64 figures are local native computational
+results while the independent all-positive certificate gate is still
+running**.
+
+For K<=5 and K<=6 roots, the corresponding exact three-ply search
+found zero additional forcing puzzle classes beyond win-in-one roots.
+This is a finite-horizon fact, not a global perfect-play claim.
+
 ## Global mathematical bounds, and the unsolved census
 
 Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring classes; with both possible players to move, an upper bound of **211,836,900,942** board-turn classes, many unreachable. The independently reproduced K≤7 census establishes **21,531 unique-win-in-one** geometric classes, and the additional native-computed K8 layer raises the current full-board lower-bound candidate to **243,957 classes**, conditional on the documented rules and D4 group action. It does **not** determine the global exact number of reachable winning puzzles, all finite-depth puzzles, eventual unique wins, or subjectively meaningful human puzzles. Do not extrapolate percentages or label these counts the global answer.
