@@ -31,6 +31,13 @@ REFERENCE = {
         "unique_win_in_one_states": 171788, "unique_win_in_one_orbits": 21531,
         "candidate_edges_repr": 556930564, "retained_edges_repr": 168094825,
     },
+    8: {
+        "reachable_states": 603033221, "d4_orbits": 75434676,
+        "terminal_states": 263548, "terminal_orbits": 33441,
+        "win_in_one_states": 5581768, "win_in_one_orbits": 698588,
+        "unique_win_in_one_states": 1948992, "unique_win_in_one_orbits": 243957,
+        "candidate_edges_repr": 2779496257, "retained_edges_repr": 988048999,
+    },
 }
 LAYER = {
     0: (1, 1, 0, 0, 0, 0, 0, 0),
@@ -41,6 +48,7 @@ LAYER = {
     5: (2055382, 258081, 0, 0, 936, 120, 360, 46),
     6: (16353436, 2048650, 552, 80, 29140, 3674, 9508, 1202),
     7: (99693740, 12475164, 15748, 2070, 480424, 60180, 161920, 20283),
+    8: (484731202, 60627546, 247248, 31291, 5071268, 634614, 1777204, 222426),
 }
 KEYS = (
     "reachable_states", "d4_orbits", "terminal_states", "terminal_orbits",
@@ -115,14 +123,15 @@ def main(argv=None) -> None:
     parser.add_argument("--k5", type=Path, required=True)
     parser.add_argument("--k6", type=Path, required=True)
     parser.add_argument("--k7", type=Path, required=True)
+    parser.add_argument("--k8", type=Path, required=True)
     parser.add_argument("--raw6", type=Path, required=True)
     parser.add_argument("--raw7", type=Path, required=True)
     args = parser.parse_args(argv)
-    for cap, file in ((5, args.k5), (6, args.k6), (7, args.k7)):
+    for cap, file in ((5, args.k5), (6, args.k6), (7, args.k7), (8, args.k8)):
         validate_native(json.loads(file.read_text(encoding="utf8")), cap)
     validate_raw(json.loads(args.raw6.read_text(encoding="utf8")))
     validate_raw7(json.loads(args.raw7.read_text(encoding="utf8")))
-    print("PASS: native 5x5 K5/K6/K7 families, D4 partitions, raw K6 and raw K7 independent BFS plus tactical negatives")
+    print("PASS: native 5x5 K5-K8 families, D4 partitions, raw K6 and raw K7 independent BFS plus tactical negatives")
 
 
 if __name__ == "__main__":
