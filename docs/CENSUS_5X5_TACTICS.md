@@ -43,8 +43,13 @@ All 120 qualifying canonical representatives were tested against a
 separate pure tuple-array rules oracle, including **all** their possible
 first actions. A separate X-first reconstruction independently replayed
 legal shortest histories and confirmed all 46 unique-winning examples.
-These are executed local observations, not claims that an independent
-full-domain tuple BFS has yet been run for the new five-cube stratum.
+An independent **unsymmetrized raw tuple-state BFS** was then executed
+locally in 93.87 seconds (Linux Python 3.13.5), visiting exactly
+**2,254,843** states, checking **88,193,892** legal candidate actions and
+**17,724,120** retained transitions. Its occupancy histogram agrees in
+every layer with the D4 quotient search. The independent oracle is retained
+in `tools/verify_5x5_raw.py` and is exercised by the Python 3.13 CI lane.
+These are computational observations, not theorem-assistant proofs.
 
 ## Why the restricted census is exhaustive
 
@@ -80,6 +85,7 @@ state count by eight without stabilizer correction would be wrong.
 python -m pip install -e '.[test]'
 python -m pytest -q tests/test_census5_tactical.py
 python -m quixoforge.census5_tactical --max-stones 5 --verify
+python tools/verify_5x5_raw.py --max-stones 5
 quixoforge census5 --max-stones 5 --family unique_win_in_one --verify
 sha256sum -c SHA256SUMS
 ```
@@ -91,9 +97,9 @@ is not consulted by this computation.
 
 ## Critical open gates and next research
 
-* Independently reproduce all 258,081 five-cube D4 orbit representatives
-  from a separate reference BFS, not merely via differential checks of
-  positive tactical positions.
+* Independently verify the complete five-cube **D4 orbit quotient** by
+  a separate implementation of the eight geometric maps, in addition to
+  the now independently reproduced raw reachable-state count.
 * Increase exact reachable strata to six occupied cubes, with memory and
   runtime explicitly measured and fail-closed resource limits.
 * Add exact bounded D=3 forcing-win and unique-defense objectives with
