@@ -9,6 +9,7 @@ c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/census5_native.cpp -o "$work/qf
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify5_native_raw.cpp -o "$work/qf-raw"
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify7_dense_raw.cpp -o "$work/qf-raw7"
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify8_dense_raw.cpp -o "$work/qf-raw8"
+c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/census5_force3_native.cpp -o "$work/qf-f3"
 "$work/qf-native" 5 > "$work/k5.json"
 "$work/qf-native" 6 > "$work/k6.json"
 "$work/qf-native" 7 20000000 > "$work/k7.json"
@@ -16,7 +17,9 @@ c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify8_dense_raw.cpp -o "$work
 "$work/qf-raw" 6 > "$work/raw6.json"
 "$work/qf-raw7" 7 125000000 > "$work/raw7.json"
 "$work/qf-raw8" 8 700000000 > "$work/raw8.json"
-python tools/check_native_census.py --k5 "$work/k5.json" --k6 "$work/k6.json" --k7 "$work/k7.json" --k8 "$work/k8.json" --raw6 "$work/raw6.json" --raw7 "$work/raw7.json" --raw8 "$work/raw8.json"
+"$work/qf-f3" 7 20000000 > "$work/f3.json" 2> "$work/f3.log"
+python tools/verify_force3_positives.py --native-log "$work/f3.log" --output "$work/f3-certified.json"
+python tools/check_native_census.py --k5 "$work/k5.json" --k6 "$work/k6.json" --k7 "$work/k7.json" --k8 "$work/k8.json" --raw6 "$work/raw6.json" --raw7 "$work/raw7.json" --raw8 "$work/raw8.json" --f3 "$work/f3.json" --f3-certified "$work/f3-certified.json"
 PYTHONPATH="src" python -m quixoforge.census5_forced3 --verify
 sha256sum -c SHA256SUMS
 echo "PASS: exact declared-domain 5x5 R7 census and independent six-, seven- and eight-cube raw reachability and full-scope one-ply tactic verification"
