@@ -14,6 +14,11 @@ ROOT = Path(__file__).resolve().parents[1]
         "structural_nonterminal_both_colors_board_turn_orbits=192103543260",
         "reachable_nonterminal_board_turn_orbit_upper_bound=192103543264",
     )),
+    ("terminal_bounds_by_occupancy.cpp", (
+        "k,structural_terminal_board_turn_D4",
+        "8,55680,68686026,68686026",
+        "25,4583676,3839812,3839812",
+    )),
     ("terminal_orbit_bruteforce.cpp", (
         "g=2 fixed_terminal=435502 fixed_nonterminal_both_colors=1149024",
         "g=4 fixed_terminal=4841478 fixed_nonterminal_both_colors=9475712",
