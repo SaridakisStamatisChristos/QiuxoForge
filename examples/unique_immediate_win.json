@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "source": "legal replay",
+  "history": [
+    "2:D",
+    "3:D",
+    "0:R",
+    "3:D",
+    "22:U",
+    "19:D",
+    "2:R",
+    "9:U",
+    "3:L",
+    "15:U",
+    "3:L",
+    "2:D",
+    "21:R",
+    "4:D",
+    "20:R",
+    "20:R",
+    "10:R",
+    "3:R",
+    "3:D",
+    "20:R",
+    "9:U",
+    "10:R",
+    "19:L"
+  ],
+  "depth": 1,
+  "unique": true,
+  "solutions": [
+    "2:D"
+  ],
+  "proof": {
+    "outcome": "WIN",
+    "move": "2:D",
+    "child": {
+      "outcome": "LOSS",
+      "terminal": true
+    }
+  }
+}
