@@ -118,6 +118,24 @@ def validate_raw7(doc: dict) -> None:
         raise AssertionError("independent full-scope edge totals mismatch")
 
 
+def validate_raw8(doc: dict) -> None:
+    """Independent compressed-rank 603M-state reachability and full tactical oracle."""
+    if doc.get("schema") != 1 or doc.get("cap") != 8:
+        raise AssertionError("independent eight-cube scope mismatch")
+    if doc["raw_states"] != REFERENCE[8]["reachable_states"]:
+        raise AssertionError("independent eight-cube raw reachability mismatch")
+    if doc["by_occupancy"] != [LAYER[k][0] for k in range(9)]:
+        raise AssertionError("independent eight-cube occupancy layers disagree")
+    if doc["terminal_by_occupancy"] != [LAYER[k][2] for k in range(9)]:
+        raise AssertionError("independent eight-cube terminal states disagree")
+    if doc["win_in_one_by_occupancy"] != [LAYER[k][4] for k in range(9)]:
+        raise AssertionError("independent eight-cube winning-action positions disagree")
+    if doc["unique_win_in_one_by_occupancy"] != [LAYER[k][6] for k in range(9)]:
+        raise AssertionError("independent eight-cube unique-action positions disagree")
+    if doc["structural_bits"] != 703338822:
+        raise AssertionError("dense combinatorial rank domain mismatch")
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Evidence-check native full-board Quixo outputs")
     parser.add_argument("--k5", type=Path, required=True)
@@ -126,11 +144,13 @@ def main(argv=None) -> None:
     parser.add_argument("--k8", type=Path, required=True)
     parser.add_argument("--raw6", type=Path, required=True)
     parser.add_argument("--raw7", type=Path, required=True)
+    parser.add_argument("--raw8", type=Path, required=True)
     args = parser.parse_args(argv)
     for cap, file in ((5, args.k5), (6, args.k6), (7, args.k7), (8, args.k8)):
         validate_native(json.loads(file.read_text(encoding="utf8")), cap)
     validate_raw(json.loads(args.raw6.read_text(encoding="utf8")))
     validate_raw7(json.loads(args.raw7.read_text(encoding="utf8")))
+    validate_raw8(json.loads(args.raw8.read_text(encoding="utf8")))
     print("PASS: native 5x5 K5-K8 families, D4 partitions, raw K6 and raw K7 independent BFS plus tactical negatives")
 
 
