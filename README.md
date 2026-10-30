@@ -139,7 +139,7 @@ python -m quixoforge.census5_forced3 --verify
 
 See [formal results, claims and reproduction gates](docs/CENSUS_5X5_R7_V14.md). The previous Python `census5` command remains valid for the original five-cube witness-export domain; the native executable is for large-scale reproducible counting.
 
-An independent attacker/defender/attacker census over all ≤7-mark roots has also certified **370 new forced-win-in-exactly-three puzzle classes**, of which **64** have exactly one forcing first action. All 370 positive complete-branch certificates passed a separate pure tuple-array verifier; the all-negative census relies on the exhaustive native search.
+An independent attacker/defender/attacker census over all ≤7-mark roots has also certified **370 new forced-win-in-exactly-three puzzle classes**, of which **64** have exactly one forcing first action. All 370 positive complete-branch certificates passed a separate pure tuple-array verifier. Moreover, every one of the 370 is defender-contingent: at least two legal defender replies require disjoint sets of winning final moves. The all-negative census relies on the exhaustive native search.
 
 Existing Quixo tiering and strong-solving research predates this project (Tanaka et al., *Quixo Is Solved*, 2020; Robert Shi, Berkeley UCB/EECS-2024-139, 2024, Chapter 7.2). The novelty claim is limited to our particular *reachable tactical puzzle census and independently reproduced counts*; the two-color tier partition is **prior art**, not an invention of QuixoForge.
 
