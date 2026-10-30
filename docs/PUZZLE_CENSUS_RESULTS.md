@@ -13,7 +13,8 @@ not a published novelty claim, human difficulty rating, or global 5x5 count.
 | P0 nonterminal | 20,257 | 2,789 |
 | P1 eventual forced win | 15,167 | 2,062 |
 | P2 exactly one winning action | 1,648 | **212** |
-| P4 P2 + at least 3 plies + branching reply | 384 | **48** |\n| Adaptive response (incompatible reply-solution sets) | 320 | **40** |
+| P4 P2 + at least 3 plies + branching reply | 384 | **48** |
+| Adaptive response (incompatible reply-solution sets) | 320 | **40** |
 | Exactly one fastest winning action | 2,768 | 362 |
 | Multiple winning actions | 13,519 | 1,850 |
 | Forced loss | 5,090 | 727 |
@@ -41,7 +42,12 @@ P2 orbit sizes: 4 -> 12, 8 -> 200. P4: 8 -> 48.
 | 7 | 7 | 4 |
 | Total | 2,062 | 212 |
 
-All 48 P4 cases have >=10 legal opponent reply actions; thus their\nbranching threshold adds no further distinction beyond depth >=3 on 3x3.\nThe stronger adaptive-response family has 40 orbits with remoteness\n3:26, 5:10 and 7:4. No human difficulty rating is inferred.\n\nThe remoteness distribution is not a human difficulty study. The nontrivial
+All 48 P4 cases have >=10 legal opponent reply actions; thus their
+branching threshold adds no further distinction beyond depth >=3 on 3x3.
+The stronger adaptive-response family has 40 orbits with remoteness
+3:26, 5:10 and 7:4. No human difficulty rating is inferred.
+
+The remoteness distribution is not a human difficulty study. The nontrivial
 P4 family intentionally excludes one-ply recognition and single-response
 lines; it does not prove that humans find every P4 position difficult.
 
@@ -112,3 +118,7 @@ NOT PROVED: a complete reachable-state or puzzle total for 5x5,
 human-rated intellectual difficulty, equivalence stronger than D4,
 novelty of the specific counts relative to all literature, and formal
 verification of Python source with a proof assistant.
+
+An independent standalone tuple oracle reproduced the adaptive-response subset:
+320 raw positions (40 geometric orbits, all orbit size 8). Its remoteness
+histogram is 26 at 3 plies, 10 at 5 plies, and 4 at 7 plies.

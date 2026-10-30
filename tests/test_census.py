@@ -140,3 +140,33 @@ def test_sparse_5x5_four_stone_exact_new_domain():
         "states": 187164, "orbits": 23659,
         "nonterminal_states": 187164, "nonterminal_orbits": 23659,
     }
+
+
+def test_raw_3x3_burnside_sanity_and_exact_colorings():
+    # All structural 3-color boards, independently of reachability and turn.
+    assert (3**9 + 2*3**3 + 3**5 + 4*3**6) // 8 == 2862
+    assert (3**9 + 2*3**3 + 3**5 + 4*3**6) % 8 == 0
+    seen = set()
+    for code in range(3**9):
+        x = o = 0
+        number = code
+        for index in range(9):
+            digit = number % 3
+            number //= 3
+            if digit == 1:
+                x |= 1 << index
+            elif digit == 2:
+                o |= 1 << index
+        seen.add(canonical_key((x, o, 1)))
+    assert len(seen) == 2862
+
+
+def test_census_command_line_is_replayable(capsys):
+    import json
+    from quixoforge.cli import main
+    main(["census", "--size", "3"])
+    result = json.loads(capsys.readouterr().out)
+    assert result["families"]["adaptive_response_win"]["orbits"] == 40
+    main(["census", "--size", "5", "--max-stones", "0"])
+    report = json.loads(capsys.readouterr().out)
+    assert report["reachable_states"] == 1
