@@ -130,6 +130,7 @@ def verify(source: Path) -> dict:
     transformations = maps()
     seen = set()
     hist = Counter()
+    adaptive_hist = Counter()
     raw = 0
     for number, (x, o, turn_bit, expected_actions, claimed_orbit_size) in enumerate(representatives, 1):
         if x & o or (x | o).bit_count() != 7 or turn_bit not in (0, 1):
@@ -151,8 +152,35 @@ def verify(source: Path) -> dict:
         seen.add(representative)
         raw += len(orbit)
         hist[len(choices)] += 1
+        # Defender-dependent-response objective: two distinct defender
+        # moves force disjoint winning final-action sets. Do not equate
+        # different resulting boards with distinct action identities.
+        adaptive = False
+        for first in choices:
+            after = apply(state, first)
+            sets = []
+            for defense in moves(after):
+                middle = apply(after, defense)
+                if terminal(middle) == state[1]:
+                    continue  # defender already lost under terminal rules
+                winning_replies = frozenset(
+                    m for m in moves(middle)
+                    if terminal(apply(middle, m)) == state[1]
+                )
+                if not winning_replies:
+                    raise AssertionError("previously certified force3 action has uncovered defense")
+                if any(winning_replies.isdisjoint(old) for old in sets):
+                    adaptive = True
+                    break
+                sets.append(winning_replies)
+            if adaptive:
+                break
+        if adaptive:
+            adaptive_hist[len(choices)] += 1
         if number % 50 == 0:
             print(f"verified {number}/370 independent full-branch certificates", flush=True)
+    if sum(adaptive_hist.values()) != 370 or adaptive_hist != hist:
+        raise AssertionError("new defender-dependent solution classification disagrees")
     if raw != 2880 or hist[1] != 64:
         raise AssertionError("raw total or unique-first-action classes disagree")
     result = {
@@ -160,6 +188,9 @@ def verify(source: Path) -> dict:
         "exactly_three_orbits": len(seen), "raw_state_weight": raw,
         "unique_forcing_first_action_orbits": hist[1],
         "forcing_first_action_histogram": dict(sorted(hist.items())),
+        "adaptive_reply_orbits": sum(adaptive_hist.values()),
+        "adaptive_unique_first_action_orbits": adaptive_hist[1],
+        "adaptive_forcing_first_action_histogram": dict(sorted(adaptive_hist.items())),
         "independent_oracle": "pure tuple array move/terminal AND-OR; no native source imports",
     }
     return result
