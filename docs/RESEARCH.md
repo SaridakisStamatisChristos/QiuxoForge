@@ -109,3 +109,14 @@ A priority queue keyed by distance ensures shortest winning strategies and longe
 For the 3x3 variant, reference tuple-shift and independently implemented occupancy-mask moves were run to closure. Their complete reachable sets, directed edges, winner evaluations, outcome labels and remotenesses agreed position by position. The initial state is a seven-ply WIN and there are **20,247 WIN / 11,780 LOSS / zero NONFORCED** states. It reproduces published 3x3 results (Shi 2024); it does not establish novelty. The tablebase is 7-byte binary records (`<HHbBB`), sorted by `(X mask,O mask,turn)`, prefixed by `QF3\x01` and a count, gzip-compressed with a fixed timestamp and SHA256 integrity check. Data can be regenerated using `python -m quixoforge.tablebase --rebuild`. The static compressed data is installed with the Python wheel.
 
 **Prior art:** [Tanaka et al., *Quixo Is Solved* (2020)](https://arxiv.org/abs/2007.15895) solved 5x5 as a draw. [Robert Shi, *Parallel Solving of Two-Player Tierable Abstract Strategy Games* (2024)](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2024/EECS-2024-139.pdf), section 7.4, independently reproduced 5x5 and reported 32,027 reachable 3x3 positions with a first-player win in 7. The earlier README's suggestion that 5x5 opening remains an open research result was wrong and is withdrawn. QuixoForge's own independent full 5x5 strong solve remains unattempted due to resources, not because the answer is unknown.
+
+
+## Puzzle census research addendum
+
+The central research quantity is a parameterized family of D4 orbit counts
+for explicitly defined objectives on *reachable* positions, not an
+unqualified total of all intellectual puzzles. At 3x3, exact full-game
+outcomes permit exhaustive P0/P1/P2/P4 counting. At official 5x5,
+occupancy-monotone restricted BFS gives complete structural strata up
+through K=4; no global game-theoretic puzzle inference follows.
+See PUZZLE_CENSUS_SPEC.md and PUZZLE_CENSUS_RESULTS.md.

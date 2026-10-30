@@ -74,7 +74,7 @@ def test_out_of_scope_and_invalid_parameters_are_never_false_negative():
         index.is_reachable(outside)
     with pytest.raises(ValueError, match="outside"):
         index.witness(outside)
-    for invalid in (-1, 4, True, 1.5):
+    for invalid in (-1, 5, True, 1.5):
         with pytest.raises(ValueError):
             ReachabilityIndex.build(invalid)
     with pytest.raises(ValueError):

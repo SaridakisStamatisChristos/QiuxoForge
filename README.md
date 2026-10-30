@@ -74,3 +74,34 @@ The normal **5x5 Quixo is already solved** as a game-theoretic draw (Tanaka, Bon
 Read the [v1.1 full tablebase evidence](docs/R7_V1_1_TABLEBASE.md), [formal model](docs/RESEARCH.md) and [evidence ledger](docs/EVIDENCE.md). See [v1 contract and measured verification](docs/R7_V1_RELEASE.md). The game is designed by Thierry Chapeau and published by Gigamic; independent code contains no artwork or copied rulebook.
 
 MIT licensed.
+
+
+## Exact Quixo Puzzle Census (v1.2 research)
+
+The primary objective is counting mathematically distinct, **meaningful and
+independently certifiable puzzles**, not solving the already-solved 5x5
+opening again. The full X-first 3x3 reachable graph has 32,027 states,
+4,433 D4 orbits, 2,789 nonterminal orbits, 2,062 winning-position orbits,
+**212 unique-winning-first-action puzzle orbits**, and **48 uniquely
+winning, remoteness-at-least-3, branching-opponent puzzle orbits**.
+These counts are exact for their explicitly defined families; they are not
+estimates of all possible human puzzles.
+
+The exact X-first 5x5 occupancy<=4 reachable slice contains
+**199,461** position states and **25,235** D4 orbits. These are position
+counts, not a full 5x5 tactical census.
+
+Run:
+- python -m quixoforge.census --size 3 --verify
+- quixoforge census --size 3 --family P2_unique_win
+- python -m quixoforge.census --size 5 --max-stones 4 --verify
+
+See docs/PUZZLE_CENSUS_SPEC.md for semantic definitions and equivalence
+proofs, and docs/PUZZLE_CENSUS_RESULTS.md for complete distributions,
+reproduction and limitations. The puzzle record stream includes complete
+winning first-action sets and shortest legal setup histories. Family labels
+measure mathematical forced-win structure, not human-rated difficulty.
+
+An additional exact contingent-response family has **40 D4 puzzle classes**:
+two possible opposing replies require disjoint sets of next winning moves.
+This is a stricter mathematical criterion than the 48-class P4 family.
