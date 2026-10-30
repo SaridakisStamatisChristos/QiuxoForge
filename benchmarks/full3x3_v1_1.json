@@ -1,0 +1,14 @@
+{
+  "schema": 1,
+  "variant": "two-player-3x3-three-in-row",
+  "reachable_states": 32027,
+  "legal_transitions": 276936,
+  "initial_outcome": "WIN",
+  "initial_remoteness_plies": 7,
+  "outcomes": {"WIN": 20247, "LOSS": 11780, "NONFORCED": 0},
+  "raw_sha256": "ba8e0399f38cbc5ea48140e5201ef0c0d7a435f95aad4db245305df93fbc23ad",
+  "compressed_sha256": "6ad95cb58dd78e675bed99136ea73dbc9c1507a85bd198ef154640dabf015eae",
+  "complete_reference_bitboard_agreement": true,
+  "baseline": "Robert Shi (2024), section 7.4.3: 32027 reachable positions, X wins in 7 plies",
+  "interpretation": "Exhaustive finite 3x3 variant; not 5x5 result or worldwide SOTA speed benchmark"
+}

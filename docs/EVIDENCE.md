@@ -67,4 +67,14 @@
 - **R17 (USER/SHOULD)**: Fair baseline for heuristic search: `engine_bench`; no timed comparison without exact score equality. Local `VERIFIED`; external superiority `UNVERIFIED`.
 - **R18 (USER/HARD)**: Preserve end-to-end headless package/CLI while enhancing rules: `cli`, `pyproject`, CI, checksums, README; local `VERIFIED`; remote CI requires revision-specific run.
 
-Scope: full playable rules and core code shipped, **not** a complete mathematically solved infinite-game strategy or unbounded arbitrary-position reachability. See `R7_V1_RELEASE.md` for exact evidence, assumptions and unproved claims.
+Scope: full playable rules and core code shipped, **not** an independent reproduction of the previously published 5x5 strong solution or unbounded arbitrary-position reachability. See `R7_V1_RELEASE.md` for exact evidence, assumptions and unproved claims.
+
+
+## R7 v1.1 — complete 3x3 strong solution (new research gate)
+
+- **Prior-art correction:** The earlier wording suggesting that 5x5 Quixo is unsolved was false. Satoshi Tanaka et al., *Quixo Is Solved* (2020), showed that the ordinary 5x5 initial position is a game-theoretic draw under their solving model; Shi (UC Berkeley, 2024) replicated this with HPC. The claim is attributed, not ours. Full 5x5 reproduction remains **UNVERIFIED**.
+- **R19 HARD/VERIFIED local:** Variable-sized rules in `variants` have independent tuple- and bit-mask transitions for 2..5. The published 3x3 opening is WIN in exactly 7 plies and the legal reachable graph consists of exactly **32,027 board/turn states** with **276,936 directed move transitions** (including multiplicity). Both independent versions reproduce *every* state and the entire directed multigraph.
+- **R20 HARD/VERIFIED local:** The `retrograde` loopy game solver exhaustively enumerates all states (raises on a resource cap instead of outputting partial data); terminal attractor propagation computes WIN/LOSS and minimal/maximal remoteness; remaining closed cyclic components are `NONFORCED`, never claimed forced WIN/LOSS. `verify` independently checks all edges and all value/remoteness Bellman equations. No arbitrary cap is interpreted as a draw.
+- **R21 HARD/VERIFIED local:** The 3x3 compact tablebase is SHA256-checked before use; contains 32,027 values and remotenesses; rejects structurally invalid and unreachable queries; `micro` CLI returns optimal move set and exact score. Independent bitboard checks cover every record and all eight D4 symmetries. Artifact wheel must include `data/quixo3.tbl.gz`; local clean-wheel smoke is part of package gate.
+- **R22 SHOULD/PARTIAL:** Reproducible CI now includes `python -m quixoforge.tablebase --rebuild` for both Python 3.10 and 3.13. Until remote Actions run on the new commit, mark remote evidence **UNVERIFIED**.
+- **Scope boundary:** Independently reproduced 3x3, not 4x4's 82,497,861 positions and not 5x5's roughly 1.69 trillion positions. Strong SOTA external AI strength remains **UNVERIFIED**.
