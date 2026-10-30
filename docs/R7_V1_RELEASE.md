@@ -46,3 +46,7 @@
 ## Prior-art / novelty boundary
 
 Fixed-depth minimax with alpha-beta has existing Quixo implementations (e.g. https://github.com/poyrazn/quixo). This project does **not** claim inventing alpha-beta or solving the Quixo opening. The research contribution is reproducible, independent reference/optimized verification plus strict evidence provenance and finite-domain certificates.
+
+## Historical correction appended in v1.1 (2026-10-30)
+
+This v1.0 document's wording that 5x5 Quixo has no published full-game solution was **incorrect**. The 5x5 opening was already solved as a draw by Tanaka et al. (2020) and reproduced by Shi (2024). This v1.1 release includes our independently reproduced *3x3* exact game-graph solution and tablebase; see `R7_V1_1_TABLEBASE.md`. The local codebase has not reproduced the massive 5x5 analysis.

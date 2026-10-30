@@ -17,6 +17,7 @@
 | Playable opponent | Iterative-deepening alpha-beta, deterministic heuristic, D4 transposition bounds, tactical move ordering, best complete-iteration result on node budget; scores are *heuristic*, not certificates |
 | Puzzle generation | Seeded legal playouts, D4 deduplication, independent exact audit, proof verification, reproducible JSON fixtures; explicit error rather than uncertified result |
 | Research evidence | Differential tests, independent brute-force fixed-depth minimax oracle, complete 3-mark state graph, official source checks, JSON benchmarks, unit tests and CI |
+| **Exact 3x3 solved variant** | Exhaustive loopy retrograde analysis, full **32,027-state** and **276,936-transition** graph; separate list and bitmask implementations agree on *every* state/outcome/remoteness/edge; SHA256-verified 83 KB optimal-move tablebase |
 
 ### Installation and tests
 
@@ -26,6 +27,8 @@ Requires Python 3.10+. No dependencies for runtime. `pytest` is optional for tes
 python -m pip install -e '.[test]'
 python -m pytest -q
 python -m quixoforge.verify_examples
+python -m quixoforge.tablebase
+python -m quixoforge.tablebase --rebuild  # checks all 32027 states with independent oracles
 python -m quixoforge.team_puzzles
 python -m quixoforge.bench --seed 711 --count 3 --plies 6 --depth 1 --repeats 1
 python -m quixoforge.engine_bench --seed 917 --count 6 --plies 14 --depth 2 --repeats 2
@@ -36,6 +39,8 @@ sha256sum -c SHA256SUMS
 
 ```sh
 quixoforge show 0:R 5:D
+quixoforge micro  # full exact 3x3 solution, X wins in seven plies
+quixoforge micro --board ......... --turn X
 quixoforge solve --depth 3 0:R 5:D
 quixoforge opponent --depth 4 --max-nodes 100000 0:R 5:D
 quixoforge team --depth 1 0:R:2  # seat 0 plays X, directs cube point to teammate seat 2
@@ -58,10 +63,14 @@ Positions containing at most **three marked cubes** can be answered `REACHABLE` 
 
 - All rules follow the [Gigamic English rulebook](https://cdn.1j1ju.com/medias/a8/5e/26-quixo-rulebook.pdf) (two-player and four-player sections, p. 4). Human declarations, consultation between teammates and tournament clocks are social rules, not game-state transitions.
 - Bounded proof certificates are inductively valid under the source model; Python code has *not* been proved by a theorem assistant. Finite tests cannot prove all possible 25-cell board configurations.
-- No official indefinite repetition/draw rule has been invented. `UNKNOWN` means no outcome was certified inside the requested horizon. A full-game game-theoretic opening result is **open**.
+- No official indefinite repetition/draw rule has been invented. `UNKNOWN` means no outcome was certified inside the requested horizon. The 5x5 initial position has already been solved as a theoretical draw (Tanaka et al. 2020, replicated by Shi 2024). **QuixoForge does not reproduce that 5x5 solution**. The 3x3 game variant is now fully solved and independently cross-checked in QuixoForge; `NONFORCED` denotes lack of a forced terminal win, not an invented official repetition adjudication.
 - Four-player geometric reflections do **not** automatically preserve clockwise seating; its solver therefore uses exact non-symmetry reference/bitboard caches rather than unsound reductions.
 - Local alpha-beta performance numbers are for the declared positions/depth/runtime; there is no general SOTA or outperform-all-engines claim. Competitor comparisons require equivalent rules/inputs/hardware.
 
-Read [formal model](docs/RESEARCH.md) and [evidence ledger](docs/EVIDENCE.md). See [v1 contract and measured verification](docs/R7_V1_RELEASE.md). The game is designed by Thierry Chapeau and published by Gigamic; independent code contains no artwork or copied rulebook.
+### Established prior art and correction
+
+The normal **5x5 Quixo is already solved** as a game-theoretic draw (Tanaka, Bonnet, Tixeuil and Tamura, [*Quixo Is Solved* (2020)](https://arxiv.org/abs/2007.15895)). [Robert Shi's 2024 Berkeley report](https://www2.eecs.berkeley.edu/Pubs/TechRpts/2024/EECS-2024-139.pdf) independently reproduced that outcome and counted **32,027** reachable 3x3 positions, with a first-player win in **7** moves. QuixoForge v1.1 independently reproduces **the full 3x3 graph**, not the massive 5x5 computation. We do not claim novelty for these previously established results.
+
+Read the [v1.1 full tablebase evidence](docs/R7_V1_1_TABLEBASE.md), [formal model](docs/RESEARCH.md) and [evidence ledger](docs/EVIDENCE.md). See [v1 contract and measured verification](docs/R7_V1_RELEASE.md). The game is designed by Thierry Chapeau and published by Gigamic; independent code contains no artwork or copied rulebook.
 
 MIT licensed.

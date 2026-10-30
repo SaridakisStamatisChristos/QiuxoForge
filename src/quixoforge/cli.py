@@ -12,6 +12,8 @@ from . import teams, team_bitboard
 from .generator import certify, generate
 from .team_puzzles import certify as team_certify, parse_action
 from .solver import ReferenceSolver, Result
+from .tablebase import Tablebase
+from .variants import VariantState
 
 
 def main(argv=None):
@@ -54,10 +56,28 @@ def main(argv=None):
     gen.add_argument("--min-plies", type=int, default=8)
     gen.add_argument("--max-plies", type=int, default=32)
     gen.add_argument("--allow-multiple", action="store_true")
+    micro = sub.add_parser("micro", help="exact solved 3x3 Quixo tablebase; NOT the 5x5 game")
+    micro.add_argument("--board", default=".........", help="nine row-major cells from .XO")
+    micro.add_argument("--turn", choices=("X", "O"), default="X")
     sub.add_parser("bench", help="use python -m quixoforge.bench for configured runs")
     args = ap.parse_args(argv)
     if args.command == "bench":
         bench_main([])
+        return
+    if args.command == "micro":
+        if len(args.board) != 9 or any(c not in ".XO" for c in args.board):
+            ap.error("--board must be exactly nine characters from .XO")
+        state = VariantState(tuple({".": 0, "X": X, "O": O}[v] for v in args.board),
+                             {"X": X, "O": O}[args.turn], 3)
+        tablebase = Tablebase.load()
+        try:
+            value = tablebase.lookup(state)
+        except ValueError as exc:
+            ap.error(str(exc))
+        print(json.dumps({"variant": "3x3", "outcome": value.outcome.value,
+                          "remoteness_plies": value.remoteness,
+                          "optimal_moves": [str(m) for m in tablebase.moves(state)],
+                          "tablebase_states": tablebase.states}, sort_keys=True))
         return
     if args.command == "reach":
         if len(args.board) != 25 or any(c not in ".XO" for c in args.board):
