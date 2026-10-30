@@ -48,8 +48,10 @@ def audit(puzzle: Puzzle, *, require_unique: bool = False) -> Audit:
         raise ValueError("solver disagreement on complete solution set")
     if require_unique and len(ref_solutions) != 1:
         raise ValueError("puzzle does not have a unique winning first move")
-    first_bound = next((d for d in range(1, puzzle.bound+1)
-                        if ref.solve(s, d) == Result.WIN and fast.solve(s, d) == Result.WIN), None)
+    horizon_values = [(d, ref.solve(s, d), fast.solve(s, d)) for d in range(1, puzzle.bound+1)]
+    if any(a != b for _, a, b in horizon_values):
+        raise ValueError("independent solvers disagree about shorter forcing horizons")
+    first_bound = next((d for d,a,b in horizon_values if a == Result.WIN), None)
     if first_bound is None:
         raise AssertionError("minimal horizon not found")
     # Force independent recursive certificate verification, rather than trusting

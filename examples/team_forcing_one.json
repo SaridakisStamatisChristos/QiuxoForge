@@ -1,0 +1,36 @@
+{
+  "depth": 1,
+  "history": [
+    "22:R:2",
+    "2:L:3",
+    "9:D:2",
+    "20:R:3",
+    "2:R:0",
+    "15:R:3",
+    "5:U:0",
+    "9:U:3",
+    "21:L:0",
+    "3:L:3",
+    "10:D:0",
+    "4:D:1",
+    "15:D:2",
+    "9:U:3",
+    "23:U:2"
+  ],
+  "minimal_bound": 1,
+  "proof": {
+    "child": {
+      "outcome": "LOSS",
+      "terminal": true
+    },
+    "move": "5:R:3",
+    "outcome": "WIN"
+  },
+  "schema": 1,
+  "solutions": [
+    "5:R:3",
+    "5:R:1"
+  ],
+  "unique": false,
+  "variant": "four-player"
+}

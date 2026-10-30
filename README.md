@@ -2,48 +2,66 @@
 
 [![Python tests](https://github.com/SaridakisStamatisChristos/QiuxoForge/actions/workflows/ci.yml/badge.svg)](https://github.com/SaridakisStamatisChristos/QiuxoForge/actions/workflows/ci.yml)
 
-**A correctness-first, headless, two-player Quixo research engine.** Built with UCS-Pro R7 contract/evidence discipline. No UI, service, or infrastructure dependencies.
+**Research-grade, headless Quixo engine — complete playable rules for two and four players, independent rule implementations, exact bounded proof engines, practical alpha-beta opponent, reproducible puzzle generator, exhaustive sparse-state verification.** No UI, server, external assets or runtime third-party dependencies. The GitHub repository is intentionally named `QiuxoForge`; the package import is `quixoforge`.
 
-The name of this repository is `QiuxoForge` (as requested); the importable Python package and project name are `quixoforge`.
+## Supported capabilities
 
-## Capabilities
+| Area | Delivered / independent verification |
+|---|---|
+| Two-player rules | Exact selection, shift, ownership, no return to source, terminal precedence; list-shift and separately implemented 25-bit masks |
+| Four-player rules | Four clockwise seats in opposing teams, pointed-cube ownership, either teammate pointer orientation on insertion, four-turn blank-only first round, compulsory pass only when no selectable cube; independently implemented reference and four-mask bitboard rules |
+| State validation | Strict immutable domain validation; legal-history replays; exact *unrestricted-depth* reachability with shortest witnesses for boards holding 0–3 marks, no false verdict outside domain |
+| Symmetry | All eight board D4 rotations/reflections for two-player geometry; canonical bitboard transpositions and move-coordinate restoration in alpha-beta; no unjustified four-player reflection reduction |
+| Bounded solvers | Two-player reference/bitboard and four-player reference/bitboard **exact finite-horizon** `WIN/LOSS/UNKNOWN` proofs (not an unbounded solution) |
+| Tactical proof | Fully expanded AND/OR certificates for two-player forcing wins, independently replay-checked including every defender branch; unique winning moves and exact minimal forcing depth |
+| Playable opponent | Iterative-deepening alpha-beta, deterministic heuristic, D4 transposition bounds, tactical move ordering, best complete-iteration result on node budget; scores are *heuristic*, not certificates |
+| Puzzle generation | Seeded legal playouts, D4 deduplication, independent exact audit, proof verification, reproducible JSON fixtures; explicit error rather than uncertified result |
+| Research evidence | Differential tests, independent brute-force fixed-depth minimax oracle, complete 3-mark state graph, official source checks, JSON benchmarks, unit tests and CI |
 
-- Exact **two-player** official rules: perimeter cube selection, disallow opponents' marks, shift toward the removed cube, reinsert at a *different* extremity, 12 lines, no pass, opponent-line priority on simultaneous wins, and halt after victory.
-- Immutable 25-cell board states and exact legal-history replay. **Exact unrestricted-depth reachability for positions with at most three marked cubes**, with shortest legal witnesses and definitive negative results inside that domain. Larger arbitrary boards are **not** asserted reachable or unreachable.
-- Independent reference list-shift and bitboard transition/win implementations, tested through exhaustive two-ply opening tree and seeded legal playouts.
-- Full D4 (dihedral) rotations/reflections; canonical transposition keys (board geometry only, no color-swap shortcut).
-- Exact **finite-horizon** 3-valued solvers: `WIN`, `LOSS`, `UNKNOWN`. They do *not* purport to solve Quixo globally; no repetition/draw rule is fabricated.
-- AND/OR certificates with an independent checker validating every defense on a LOSS node and a concrete winning move on a WIN node.
-- Two replay-certified, uniquely solved tactical puzzles: immediate win (depth 1), short forcing win (minimal depth 3).
-- Reproducible low-occupancy state enumeration (12,297 reachable positions for a fixed starter with at most 3 marks, forming 1,576 D4 geometric orbits), independently checked against a complete bitboard BFS. This is a finite slice, not a full-game solution.
-- Configurable deterministic comparative benchmark; no guaranteed speed superiority. Pluggable `FiniteGame` protocol for further abstract strategy games.
+### Installation and tests
 
-## One-command tests and checks
+Requires Python 3.10+. No dependencies for runtime. `pytest` is optional for tests.
 
-```bash
+```sh
 python -m pip install -e '.[test]'
 python -m pytest -q
 python -m quixoforge.verify_examples
-python -m quixoforge.bench --seed 711 --count 8 --plies 9 --depth 2 --repeats 3
+python -m quixoforge.team_puzzles
+python -m quixoforge.bench --seed 711 --count 3 --plies 6 --depth 1 --repeats 1
+python -m quixoforge.engine_bench --seed 917 --count 6 --plies 14 --depth 2 --repeats 2
+sha256sum -c SHA256SUMS
 ```
 
-Use `quixoforge show 0:R 5:D`, `quixoforge solve --depth 2 0:R 5:D`, or `quixoforge puzzle --depth 3 <history>` for a minimal headless interface.
+### CLI (no UI)
 
-Exact reachability example (25 row-major characters, `X/O/.`, with explicit next player):
-
-```bash
+```sh
+quixoforge show 0:R 5:D
+quixoforge solve --depth 3 0:R 5:D
+quixoforge opponent --depth 4 --max-nodes 100000 0:R 5:D
+quixoforge team --depth 1 0:R:2  # seat 0 plays X, directs cube point to teammate seat 2
+quixoforge team-certify --depth 1 <replayed team actions>  # complete four-player AND/OR proof
+quixoforge generate --seed 7197 --depth 1 --attempts 50 --min-plies 15 --max-plies 36
 quixoforge reach --board 'X........................' --turn O --start X --max-stones 3
-quixoforge reach --board '............X............' --turn O --max-stones 3
 ```
 
-The `reach` command returns `REACHABLE` with a shortest replayable history, `UNREACHABLE` for a position exhaustively excluded within the selected occupancy cap, or `OUT_OF_SCOPE` when the board contains more marks than the cap. Available caps are 0–3. **OUT_OF_SCOPE is never a negative reachability verdict.** `index:edge` uses row-major indices `0..24` and `L/R/U/D` as the **insertion extremity**, not the direction the selected cube moves.
+For `team`, seats `0/1/2/3` are north/east/south/west in clockwise order, with teams `(0,2)` = X and `(1,3)` = O. The source position is indexed row-major `0..24`. For two-player moves, `index:edge` (`L/R/U/D`) names the insertion end, not a displacement direction. For team moves `index:edge:point` also names which seat the cube's point faces. `PASS` is legal *only* when no marked cube pointing to that player or blank cube is available (never after a winning line). Four-player rows and columns are shared physical cubes; teammates do not each own their own colored marking.
 
-## Correctness and research scope
+`opponent` returns the strongest **completed** search iteration, node count, score and principal variation (until only exact transposition entries remain). If the budget prevents completing even depth 1, it returns no move rather than an unverified action. `solve` emits three-valued, independently agreed *finite-horizon* outcomes; a heuristic recommendation is **never** mislabeled as a game-theoretic win.
 
-See [rules and proof obligations](docs/RESEARCH.md) and the [R7 evidence/assumption ledger](docs/EVIDENCE.md). The two-player rules are grounded in the [Gigamic official rulebook](https://export.gigamic.com/wp-content/uploads/2021/01/INS-RULES_QUIXO_03-2017.pdf), English page 4 (PDF page index 1). The four-player team variant has additional point-orientation requirements and is **not implemented**; neither are human announcement/tournament timing, solved opening tablebases, reachability decisions for positions with four or more marks, or a game-theoretic solution to infinite play. These are explicit scope limitations rather than silent claims.
+`generate` produces a self-contained JSON schema-1 certificate, with source replay history, complete solution list and a checked proof tree. A difficulty label means minimal winning depth among the tested bounded horizons, not human cognitive difficulty. Four-player puzzles use `quixoforge team-certify`, and are checked using `python -m quixoforge.team_puzzles`; the optimized four-mask solver creates a proof checked independently against the reference team model. To validate a generated JSON file, save it to `puzzle.json` and run `python -m quixoforge.verify_examples puzzle.json`.
 
-The tactical puzzles are provable **relative to the formalized two-player move model and a stated finite horizon**, with machine-checkable finite proof trees. A verified finite-horizon result is not an unbounded theorem about optimal play.
+### Exact reachability boundary
 
-## License
+Positions containing at most **three marked cubes** can be answered `REACHABLE` (with a shortest legal history) or `UNREACHABLE` by an exhaustive *unrestricted-ply* graph search. The occupancy bound is not a ply bound, and monotonicity of occupied-cube count proves completeness of this finite slice. Requests containing four or more marks produce `OUT_OF_SCOPE` — never a false negative. There are 12,297 reachable `(board, turn)` states for X starting and a three-mark bound, independently re-enumerated via bitboards. Full arbitrary-board reachability and solving the entire potentially cyclic Quixo game are **not asserted**.
 
-MIT. Quixo is a game by Thierry Chapeau, published by Gigamic; this independent engine does not contain the official rulebook or copyrighted game assets.
+## Correctness scope and limitations
+
+- All rules follow the [Gigamic English rulebook](https://cdn.1j1ju.com/medias/a8/5e/26-quixo-rulebook.pdf) (two-player and four-player sections, p. 4). Human declarations, consultation between teammates and tournament clocks are social rules, not game-state transitions.
+- Bounded proof certificates are inductively valid under the source model; Python code has *not* been proved by a theorem assistant. Finite tests cannot prove all possible 25-cell board configurations.
+- No official indefinite repetition/draw rule has been invented. `UNKNOWN` means no outcome was certified inside the requested horizon. A full-game game-theoretic opening result is **open**.
+- Four-player geometric reflections do **not** automatically preserve clockwise seating; its solver therefore uses exact non-symmetry reference/bitboard caches rather than unsound reductions.
+- Local alpha-beta performance numbers are for the declared positions/depth/runtime; there is no general SOTA or outperform-all-engines claim. Competitor comparisons require equivalent rules/inputs/hardware.
+
+Read [formal model](docs/RESEARCH.md) and [evidence ledger](docs/EVIDENCE.md). See [v1 contract and measured verification](docs/R7_V1_RELEASE.md). The game is designed by Thierry Chapeau and published by Gigamic; independent code contains no artwork or copied rulebook.
+
+MIT licensed.

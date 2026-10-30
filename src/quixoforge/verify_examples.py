@@ -17,6 +17,10 @@ def check(path: Path) -> dict:
     report = audit(puzzle, require_unique=doc["unique"])
     if [str(m) for m in report.solutions] != doc["solutions"]:
         raise ValueError(f"solution set changed: {path}")
+    if "minimal_bound" in doc and doc["minimal_bound"] != report.minimal_bound:
+        raise ValueError(f"false minimal horizon metadata: {path}")
+    if "difficulty" in doc and doc["difficulty"] != report.difficulty:
+        raise ValueError(f"false difficulty metadata: {path}")
     if verify(puzzle.state(), doc["depth"], doc["proof"]) != Result.WIN:
         raise ValueError(f"invalid certificate: {path}")
     return {"file": str(path), "result": "VERIFIED", "minimal_bound": report.minimal_bound,
@@ -28,7 +32,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("files", nargs="*", type=Path)
     args = ap.parse_args(argv)
-    files = args.files or sorted(Path("examples").glob("*.json"))
+    files = args.files or sorted(p for p in Path("examples").glob("*.json") if not p.name.startswith("team_"))
     if not files:
         ap.error("no examples provided or discovered; run from repository root")
     for path in files:

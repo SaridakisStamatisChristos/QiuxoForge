@@ -1,0 +1,25 @@
+{
+  "depth": 2,
+  "implementations": {
+    "alpha_beta": {
+      "max_elapsed_ns": 18907344,
+      "median_elapsed_ns": 10603164.5,
+      "median_nodes": 172.0,
+      "min_elapsed_ns": 7463092
+    },
+    "independent_brute": {
+      "max_elapsed_ns": 81728811,
+      "median_elapsed_ns": 64061719.0,
+      "median_nodes": 911.0,
+      "min_elapsed_ns": 49469348
+    }
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "plies": 14,
+  "python": "3.13.5",
+  "repeats": 2,
+  "samples": 6,
+  "schema": 1,
+  "scope": "identical fixed-depth heuristic objective; local timings only",
+  "seed": 917
+}
