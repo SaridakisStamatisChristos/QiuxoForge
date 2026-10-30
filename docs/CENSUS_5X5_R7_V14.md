@@ -30,6 +30,8 @@ The standalone native D4 enumerator (tools/census5_native.cpp) uses packed X/O m
 
 The separate native raw verifier (tools/verify5_native_raw.cpp) contains its **own tuple-array move and winner implementations**, no symmetry quotient and no dependency on the QuixoForge rules. At K6 it enumerated **18,608,279 raw states**, of which **552 are terminal**, examining **713,951,292 legal actions** and retaining **178,424,208** within-domain transitions; local runtime ~31.11s and memory ~409MB. It also matches all previously reproduced K≤5 layers. The machine checker tools/check_native_census.py compares the independent raw and D4 outputs, exact occupancy tables, Burnside partitions, terminal strata and recorded first-action families.
 
+An additional, entirely unsymmetrized seven-cube dense-rank verifier (tools/verify7_dense_raw.cpp) has now enumerated 118,302,019 raw states, 16,300 terminal states, 4,449,658,784 legal candidate actions and 1,342,280,992 in-domain transitions. Its independently implemented list-shift and winner checks also found exactly 510,500 raw immediate-win positions and 171,788 raw unique-win positions, matching all occupancy layers. The 195.47-second local C++17 run peaked near 944 MiB RAM. This is independent computational corroboration of the native D4 class counts via orbit-stabilizer, not a formal proof of implementation correctness.
+
 For the restricted root domain K≤5, a separate Python fast threat-preimage evaluator classified all **132,116** potentially relevant roots (own marks ≥3). It found no additional forced-win-in-exactly-three positions beyond immediate wins. This result is a finite-horizon computational claim pending its distinct CI/differential gate; no later tactical continuation is occupancy-capped.
 
 ## Completeness proof within an occupancy cap
@@ -49,11 +51,13 @@ Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring cla
 ~~~sh
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/census5_native.cpp -o /tmp/qf-census5
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify5_native_raw.cpp -o /tmp/qf-raw5
+c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify7_dense_raw.cpp -o /tmp/qf-raw7
 /tmp/qf-census5 5 > /tmp/qf-k5.json
 /tmp/qf-census5 6 > /tmp/qf-k6.json
 /tmp/qf-census5 7 20000000 > /tmp/qf-k7.json
 /tmp/qf-raw5 6 > /tmp/qf-raw6.json
-python tools/check_native_census.py --k5 /tmp/qf-k5.json --k6 /tmp/qf-k6.json --k7 /tmp/qf-k7.json --raw6 /tmp/qf-raw6.json
+/tmp/qf-raw7 7 125000000 > /tmp/qf-raw7.json
+python tools/check_native_census.py --k5 /tmp/qf-k5.json --k6 /tmp/qf-k6.json --k7 /tmp/qf-k7.json --raw6 /tmp/qf-raw6.json --raw7 /tmp/qf-raw7.json
 python -m quixoforge.census5_forced3 --verify
 python -m pytest -q
 sha256sum -c SHA256SUMS
@@ -65,7 +69,7 @@ Invalid occupancy caps or resource budgets fail instead of returning a misleadin
 
 | Requirement | Evidence status | Critical limitation |
 |---|---|---|
-| 5×5 official board, move and terminal semantics | VERIFIED for K≤5 against independent Python implementation | Independent K6–7 terminal/first-action audit is still valuable |
+| 5×5 official board, move and terminal semantics | VERIFIED for K≤5 against independent Python implementation | Now independently reproduced through K7, including complete negative classifications |
 | Reachability K≤6 | VERIFIED by native D4 and independent raw tuple BFS | Exact only within declared occupancy |
 | Reachability K=7 | VERIFIED via two independent exhaustive native graph traversals | Exact within the declared K≤7 domain only |
 | Immediate-win objective K≤5 | VERIFIED by multiple independently implemented paths | Does not imply eventual forced-win strategy |
