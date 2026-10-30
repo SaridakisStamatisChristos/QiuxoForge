@@ -78,3 +78,25 @@ Scope: full playable rules and core code shipped, **not** an independent reprodu
 - **R21 HARD/VERIFIED local:** The 3x3 compact tablebase is SHA256-checked before use; contains 32,027 values and remotenesses; rejects structurally invalid and unreachable queries; `micro` CLI returns optimal move set and exact score. Independent bitboard checks cover every record and all eight D4 symmetries. Artifact wheel must include `data/quixo3.tbl.gz`; local clean-wheel smoke is part of package gate.
 - **R22 SHOULD/PARTIAL:** Reproducible CI now includes `python -m quixoforge.tablebase --rebuild` for both Python 3.10 and 3.13. Until remote Actions run on the new commit, mark remote evidence **UNVERIFIED**.
 - **Scope boundary:** Independently reproduced 3x3, not 4x4's 82,497,861 positions and not 5x5's roughly 1.69 trillion positions. Strong SOTA external AI strength remains **UNVERIFIED**.
+
+
+## R7 Census Phase — exact scope and evidence gates (v1.2)
+
+- R23 / VERIFIED after green CI: exact 3x3 reachable nonterminal and
+  objective-family counting using all tablebase states and legal first actions.
+- R24 / VERIFIED after green CI: D4 orbit partition and independent
+  stabilizer/Burnside counts with coordinate/move covariance regressions.
+- R25 / VERIFIED after green CI: 3x3 puzzle records include canonical
+  objective identity, all winning actions and verified shortest legal histories.
+- R26 / VERIFIED after green CI: complete X-first 5x5 occupancy<=4
+  reachability, 199461 states, 25235 D4 classes, 7945716 examined
+  action candidates, 1253304 in-domain directed legal transitions.
+- R27 / VERIFIED after green CI: independent bitboard exhaustive
+  reconstruction, value comparison and full census predicate checker.
+- R28 / UNVERIFIED: global 5x5 puzzle counts, exact >=5 occupancy states
+  and higher depth proof classification, human psychometric difficulty.
+- Claim C4 / NOT CLAIMED: new 5x5 solved result, globally novel result,
+  formal machine-checked theorem, or unqualified total meaningful puzzles.
+
+Every R23–R27 claim requires BOTH supported Python CI checks and the
+current branch head SHA, not a stale green predecessor.

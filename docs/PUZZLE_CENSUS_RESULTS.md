@@ -45,7 +45,7 @@ The remoteness distribution is not a human difficulty study. The nontrivial
 P4 family intentionally excludes one-ply recognition and single-response
 lines; it does not prove that humans find every P4 position difficult.
 
-## Exact restricted 5x5 reachable domain: occupancy <=3
+## Exact restricted 5x5 reachable domain: occupancy <=4
 
 | Occupancy | Reachable states | D4 classes |
 |---:|---:|---:|
@@ -53,14 +53,21 @@ lines; it does not prove that humans find every P4 position difficult.
 | 1 | 16 | 3 |
 | 2 | 468 | 60 |
 | 3 | 11,812 | 1,512 |
-| Total | 12,297 | **1,576** |
+| 4 | **187,164** | **23,659** |
+| Total | **199,461** | **25,235** |
 
-Legal candidate actions examined by reference BFS: 498,328.
-Actual actions remaining inside this occupancy-restricted graph: 59,516.
-All positions here are nonterminal (three occupied cells cannot contain
-a length-five line); all 1,576 classes are structural positions, not
-verified unrestricted 5x5 tactical puzzles. Burnside sum:
-12,608 = 8 * 1,576.
+Both independent tuple-array and bitboard complete BFS enumerators matched
+199,461 states, 7,945,716 legal candidate actions, and 1,253,304 actions
+remaining within occupancy <=4. The independent bitboard orbit enumeration
+had Burnside incidence sum 201,880 = 8 * 25,235, distributed by orbit
+size: size 1 -> 1, size 2 -> 4, size 4 -> 597, size 8 -> 24,633.
+All positions in occupancy <=4 are nonterminal because fewer than five
+marked cubes cannot form a line of five. These are structural positions,
+NOT proven full 5x5 tactical puzzles. No counts above occupancy 4 are
+claimed. One bitboard local Python 3.13.5 run took 2.70 seconds for
+BFS and 13.23 seconds including D4 stabilizer measurement, whereas
+a separate tuple-reference BFS took approximately 6.01 seconds.
+These are **non-equivalent workloads**, not a performance comparison.
 
 ## Reproduction / independent evidence
 
@@ -84,7 +91,7 @@ Executable gates:
 
 - python -m pytest -q tests/test_census.py
 - python -m quixoforge.census --size 3 --verify
-- python -m quixoforge.census --size 5 --max-stones 3 --verify
+- python -m quixoforge.census --size 5 --max-stones 4 --verify
 - python -m quixoforge.census --size 3 --family P2_unique_win
 
 Record GitHub Actions branch run and commit when interpreting this
@@ -98,7 +105,7 @@ orbit-stabilizer/Burnside identity; occupancy monotonicity and exactness
 of occupancy-restricted BFS with all same-occupancy transitions.
 
 COMPUTATIONALLY EXHAUSTIVE: specified 3x3 states and exact predicate
-counts, and 5x5 occupancy<=3 reachable structural counts, provided
+counts, and 5x5 occupancy<=4 reachable structural counts, provided
 the independent graph/checksum/CI gates pass at the pinned revision.
 
 NOT PROVED: a complete reachable-state or puzzle total for 5x5,

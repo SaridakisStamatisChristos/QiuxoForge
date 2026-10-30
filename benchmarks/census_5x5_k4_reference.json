@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "variant": "5x5-two-player-X-first",
+  "cap": 4,
+  "reference_oracle": "complete tuple-state BFS",
+  "bitboard_oracle": "complete mask-state BFS",
+  "candidate_actions": 7945716,
+  "in_domain_actions": 1253304,
+  "reachable_states": 199461,
+  "D4_orbits": 25235,
+  "burnside_sum": 201880,
+  "orbits_by_size": {
+    "1": 1,
+    "2": 4,
+    "4": 597,
+    "8": 24633
+  },
+  "by_occupancy": {
+    "0": {
+      "states": 1,
+      "orbits": 1
+    },
+    "1": {
+      "states": 16,
+      "orbits": 3
+    },
+    "2": {
+      "states": 468,
+      "orbits": 60
+    },
+    "3": {
+      "states": 11812,
+      "orbits": 1512
+    },
+    "4": {
+      "states": 187164,
+      "orbits": 23659
+    }
+  },
+  "scope": "exact reachable structural positions only; NOT global 5x5 puzzle count",
+  "local_experiment_environment": "Linux CPython 3.13.5",
+  "numbers_verified_by_independent_bfs": true
+}

@@ -22,6 +22,12 @@ jobs:
         run: python -m pytest -q
       - name: Exact packaged 3x3 tablebase (all 32027 states)
         run: python -m quixoforge.tablebase --rebuild
+      - name: Independently verify exhaustive 3x3 puzzle census
+        run: python -m quixoforge.census --size 3 --verify
+      - name: Independently verify 5x5 exact occupancy-four census
+        run: python -m quixoforge.census --size 5 --max-stones 4 --verify
+      - name: Check release manifest SHA256
+        run: sha256sum -c SHA256SUMS
       - name: Independently check committed proof certificates
         run: python -m quixoforge.verify_examples
       - name: Independently check four-player tactical proof

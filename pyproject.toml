@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quixoforge"
-version = "1.1.0"
-description = "Verified 2/4-player Quixo engine, exact 3x3 game tablebase and tactical certificates"
+version = "1.2.0"
+description = "Exact Quixo puzzle census, independently checked 3x3 tablebase and reachable 5x5 sparse strata"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{name = "QuixoForge contributors"}]

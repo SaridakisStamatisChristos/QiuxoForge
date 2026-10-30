@@ -69,10 +69,10 @@ tests cover false symmetry, color swaps, different turns, move-edge mapping,
 reachability witnesses, and unique-solution replays.
 
 For 5x5, the ONLY currently enumerated domain contains states reachable
-with occupancy <=3. Occupancy never decreases: removing a blank introduces
+with occupancy <=4. Occupancy never decreases: removing a blank introduces
 one mark, removing your own marked cube preserves mark count. Consequently
 a path to a state with <=K marked cells cannot leave and re-enter the
-occupancy-bounded domain. The reference BFS explores all same-occupancy
+occupancy-bounded domain. The implementation is limited to K<=4 pending a separate memory-aware analysis for higher K. The reference BFS explores all same-occupancy
 cycles; the independent checker tests all legal outgoing bitboard actions
 and the exact restricted closure. Its classes are *positions*, NOT
 unrestricted 5x5 forced-win puzzles.
@@ -87,7 +87,7 @@ This is an upper bound, neither an estimate nor a verified reachable count.
 - python -m quixoforge.census --size 3
 - python -m quixoforge.census --size 3 --verify
 - python -m quixoforge.census --size 3 --family P2_unique_win
-- python -m quixoforge.census --size 5 --max-stones 3 --verify
+- python -m quixoforge.census --size 5 --max-stones 4 --verify
 - python -m pytest -q tests/test_census.py
 
 Family exports are JSONL objects containing canonical board, side to move,
