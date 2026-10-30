@@ -153,6 +153,8 @@ def census_three(*, verify: bool = False) -> dict:
                 )
                 if brute != (_TEMPLATE.index(next(t for t in _TEMPLATE if t[0] == first)) in actions):
                     raise AssertionError("reference forcing-action disagreement")
+    if verify and (len(graph), analyzed, forced3, forced3_raw, exact3, unique_exact3) != (283316, 132116, 120, 936, 0, 0):
+        raise AssertionError("full-domain 3-ply reference census regression")
     return {
         "schema": 1,
         "domain": "5x5 X-first roots occupancy<=5; unrestricted 3-ply continuations",
