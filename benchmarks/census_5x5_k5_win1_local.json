@@ -56,6 +56,13 @@
     "8": 8
   },
   "all_unique_records_shortest_replayed": 46,
-  "independent_full_five_cube_reachability_reproduction": false,
-  "claim_scope": "local finite-domain computation; not a global 5x5 puzzle count"
+  "independent_full_five_cube_reachability_reproduction": true,
+  "claim_scope": "local finite-domain computation; not a global 5x5 puzzle count",
+  "independent_raw_tuple_oracle": {
+    "raw_states": 2254843,
+    "candidate_actions": 88193892,
+    "retained_actions": 17724120,
+    "seconds": 93.87,
+    "environment": "Linux CPython 3.13.5"
+  }
 }
