@@ -91,17 +91,38 @@ def validate_raw(doc: dict) -> None:
         raise AssertionError("independent directed-edge totals mismatch")
 
 
+
+def validate_raw7(doc: dict) -> None:
+    """Independent unsymmetrized 118M-state enumeration, including negatives."""
+    if doc.get("schema") != 1 or doc.get("cap") != 7:
+        raise AssertionError("independent seven-cube scope mismatch")
+    if doc["raw_states"] != REFERENCE[7]["reachable_states"]:
+        raise AssertionError("independent seven-cube raw count mismatch")
+    if doc["by_occupancy"] != [LAYER[k][0] for k in range(8)]:
+        raise AssertionError("independent seven-cube occupancy breakdown mismatch")
+    if doc["terminal_by_occupancy"] != [LAYER[k][2] for k in range(8)]:
+        raise AssertionError("independent seven-cube terminal outcomes mismatch")
+    if doc["win_in_one_by_occupancy"] != [LAYER[k][4] for k in range(8)]:
+        raise AssertionError("independent full-scope first-action wins mismatch")
+    if doc["unique_win_in_one_by_occupancy"] != [LAYER[k][6] for k in range(8)]:
+        raise AssertionError("independent full-scope unique-action wins mismatch")
+    if doc["candidate_edges"] != 4449658784 or doc["retained_edges"] != 1342280992:
+        raise AssertionError("independent full-scope edge totals mismatch")
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Evidence-check native full-board Quixo outputs")
     parser.add_argument("--k5", type=Path, required=True)
     parser.add_argument("--k6", type=Path, required=True)
     parser.add_argument("--k7", type=Path, required=True)
     parser.add_argument("--raw6", type=Path, required=True)
+    parser.add_argument("--raw7", type=Path, required=True)
     args = parser.parse_args(argv)
     for cap, file in ((5, args.k5), (6, args.k6), (7, args.k7)):
         validate_native(json.loads(file.read_text(encoding="utf8")), cap)
     validate_raw(json.loads(args.raw6.read_text(encoding="utf8")))
-    print("PASS: native 5x5 K5/K6/K7 families, D4 partitions, raw K6 independent BFS")
+    validate_raw7(json.loads(args.raw7.read_text(encoding="utf8")))
+    print("PASS: native 5x5 K5/K6/K7 families, D4 partitions, raw K6 and raw K7 independent BFS plus tactical negatives")
 
 
 if __name__ == "__main__":
