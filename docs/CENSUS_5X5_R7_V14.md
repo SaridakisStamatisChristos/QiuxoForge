@@ -57,9 +57,15 @@ The native K8 run completed locally in 247.984 seconds with
 1,639,552 KiB observed maximum RSS. A completely separate full raw
 K8 enumeration (tools/verify8_dense_raw.cpp) uses 32-bit
 collision-free combinadic state ranks and an exact visited bitset.
-Its verification of all raw reachable and tactical counts is a separate
-gate: **do not upgrade K8 to VERIFIED before that independent run
-finishes**.
+**Its complete independent traversal FINISHED successfully:**
+603,033,221 states, 263,548 terminal states, 5,581,768 raw win-one
+positions and 1,948,992 raw unique-win-one positions. Every occupancy
+layer agreed with the independent native D4 search. It checked
+22,219,777,004 legal candidate actions, retained 7,896,591,036
+in-domain transitions, ran in 1,294.7s, and peaked at 2,443,136 KiB
+RSS. The output is committed at
+benchmarks/census_5x5_k8_raw_independent.json.
+Final GitHub CI evidence remains a separate release gate.
 
 A second mathematical invariant gives a structural upper bound for
 *every* occupancy, independently of reachability. Let [x^k] denote
@@ -100,9 +106,11 @@ complete 370 geometric root bitmasks with the claimed number of
 forcing first actions; `tools/verify_force3_positives.py`
 independently replays every first/defense/final action using a completely
 separate Python tuple-array rules implementation and checks D4 orbit
-uniqueness. The **370 / 64 figures are local native computational
-results while the independent all-positive certificate gate is still
-running**.
+uniqueness. **All 370 positive root certificates independently passed**
+(5.88s, 104,208 KiB max RSS). The forcing first-action multiplicity
+histogram is 1:64, 2:120, 3:120, 4:66; weighted raw states total 2,880.
+The exhaustive negative classification still depends on the separate
+native graph traversal, and final-head CI is a distinct release gate.
 
 For K<=5 and K<=6 roots, the corresponding exact three-ply search
 found zero additional forcing puzzle classes beyond win-in-one roots.
@@ -141,7 +149,7 @@ Invalid occupancy caps or resource budgets fail instead of returning a misleadin
 | 5×5 official board, move and terminal semantics | VERIFIED for K≤5 against independent Python implementation | Now independently reproduced through K7, including complete negative classifications |
 | Reachability K≤6 | VERIFIED by native D4 and independent raw tuple BFS | Exact only within declared occupancy |
 | Reachability K=7 | VERIFIED via two independent exhaustive native graph traversals | Exact within the declared K≤7 domain only |
-| Reachability and immediate-win classification K=8 | NATIVE-COMPUTED; independent full raw check running | Local native output pinned; not yet globally verified |
+| Reachability and immediate-win classification K=8 | VERIFIED locally with two independently implemented full-state enumerators and classifiers | CI final-head evidence pending; never a global full-game count |
 | Immediate-win objective K≤5 | VERIFIED by multiple independently implemented paths | Does not imply eventual forced-win strategy |
 | Immediate-win objective K6–7 | VERIFIED by independently classified raw winning-action counts and D4 partition | Still not eventual game-theoretic strategy |
 | Three-ply K≤5 roots | COMPUTED with fast preimage/AND-OR algorithm | CI and independent negative-certificate validation pending |
