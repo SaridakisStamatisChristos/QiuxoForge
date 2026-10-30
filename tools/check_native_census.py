@@ -161,6 +161,12 @@ def validate_forced3(native: dict, oracle: dict) -> None:
         "1": 64, "2": 120, "3": 120, "4": 66
     }:
         raise AssertionError("independent complete first-action histogram disagrees")
+    if oracle.get("adaptive_reply_orbits") != 370 or oracle.get("adaptive_unique_first_action_orbits") != 64:
+        raise AssertionError("independent defender-contingent puzzle count disagrees")
+    if {str(k): v for k, v in oracle["adaptive_forcing_first_action_histogram"].items()} != {
+        "1": 64, "2": 120, "3": 120, "4": 66
+    }:
+        raise AssertionError("independent adaptive-action histogram disagrees")
 
 
 def main(argv=None) -> None:
