@@ -137,6 +137,8 @@ def validate_raw8(doc: dict) -> None:
         raise AssertionError("independent eight-cube unique-action positions disagree")
     if doc["structural_bits"] != 703338822:
         raise AssertionError("dense combinatorial rank domain mismatch")
+    if doc["candidate_edges"] != 22219777004 or doc["retained_edges"] != 7896591036:
+        raise AssertionError("independent 8-cube directed legal-action totals mismatch")
 
 
 def validate_forced3(native: dict, oracle: dict) -> None:
