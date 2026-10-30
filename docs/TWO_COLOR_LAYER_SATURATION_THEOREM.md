@@ -1,5 +1,27 @@
 # Exact two-color monotone decomposition of the full 5×5 Quixo puzzle census
 
+## Prior art and attribution (required research boundary)
+
+**The X/O/blank-count tier partition is not novel.** Robert Shi,
+*Parallel Solving of Two-Player Tierable Abstract Strategy Games*,
+U.C. Berkeley technical report UCB/EECS-2024-139 (20 May 2024),
+Chapter 7.2, explicitly defines Quixo tiers as
+`(blank_count, X_count, O_count)`, observes that the counts of X
+and O never decrease, and develops combinatorially optimal tier hashes.
+Its Chapter 7 and earlier work by Tanaka, Bonnet, Tixeuil and Tamura,
+*Quixo Is Solved* (2020/2022), concern solving the original 5×5 game.
+Our proof below reconstructs the exact same monotonicity invariant for
+the **distinct task** of reachability-restricted puzzle census and
+states the seed/within-tier fixed-point closure as an independently
+checkable algorithm. It does **not** claim first discovery of tiering,
+Quixo monotonicity, combinatorial ranking, or strongly solving Quixo.
+
+Sources:
+- Shi 2024, Chapter 7.2:
+  https://www2.eecs.berkeley.edu/Pubs/TechRpts/2024/EECS-2024-139.pdf
+- Tanaka et al., *Quixo Is Solved*:
+  https://arxiv.org/abs/2007.15895
+
 ## Theorem: both mark counts are individually monotone
 
 Let (s) be any legal 5×5 two-player Quixo position and write (x(s))
