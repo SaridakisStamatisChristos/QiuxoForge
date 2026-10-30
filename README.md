@@ -105,3 +105,14 @@ measure mathematical forced-win structure, not human-rated difficulty.
 An additional exact contingent-response family has **40 D4 puzzle classes**:
 two possible opposing replies require disjoint sets of next winning moves.
 This is a stricter mathematical criterion than the 48-class P4 family.
+
+## Full-board 5x5 tactical census (v1.3)
+
+QuixoForge now enumerates all reachable **5x5** two-player X-first positions with up to five marked cubes using a D4 orbit-quotient BFS. It finds **2,254,843** reachable board/turn states in **283,316** geometric orbits and independently checks all positive first-move win certificates: **120** geometrically distinct win-in-one problems, of which **46** admit exactly one winning first action. Every exported puzzle includes a replayable shortest X-first history. A completely separate unsymmetrized tuple-array BFS has also reconstructed all 2,254,843 raw reachable states and verified all five occupancy layers. These are precisely scoped one-ply tactical results, **not** the global number of meaningful 5x5 puzzles.
+
+```sh
+quixoforge census5 --max-stones 5 --verify
+quixoforge census5 --max-stones 5 --family unique_win_in_one
+```
+
+See [the 5x5 tactical census](docs/CENSUS_5X5_TACTICS.md) for definitions, methods, evidence, and remaining validation gates.
