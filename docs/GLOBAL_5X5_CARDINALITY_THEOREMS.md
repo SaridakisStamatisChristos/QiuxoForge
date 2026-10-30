@@ -7,7 +7,10 @@ intellectual puzzles.
 ## Theorem A — exactly countably infinite legal winning histories
 
 A history is an ordered list of legal 5x5 two-player Quixo actions starting
-from the empty X-first board and stopping at its first winner. Actions specify
+from the empty X-first board and stopping at its first winner. **The theorem
+uses the documented rules model without any arbitrary repetition-based draw
+limit or finite move cap.** Under an additional house rule that terminates
+on repeated boards, the infinite-history statement would not apply. Actions specify
 a perimeter cube (row-major index 0..24) and an insertion endpoint L/R/U/D.
 
 Construct the legal move sequences:
