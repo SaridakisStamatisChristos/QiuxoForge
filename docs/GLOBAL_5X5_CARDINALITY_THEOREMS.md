@@ -46,7 +46,12 @@ produces the exact counts below.
 
 Proof computation: tools/terminal_orbit_bounds.cpp.
 An independent brute-force board-coloring enumerator verifies every
-non-identity D4 fixed-board count (all 7 symmetry types). These counts
+non-identity D4 fixed-board count (all 7 symmetry types). A third
+algorithm, a five-row transfer-state dynamic program in
+tools/terminal_row_transfer_oracle.py, separately derives precisely
+768,416,499,589 raw no-winning-line boards and 768,368,824,944
+nonterminal raw boards having both X and O, confirming the identity
+symmetry term without using inclusion-exclusion. These counts
 include unreachable boards and are NOT an exact number of games or
 legally reachable terminal puzzles.
 
