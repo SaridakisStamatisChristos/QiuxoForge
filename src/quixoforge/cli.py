@@ -59,8 +59,23 @@ def main(argv=None):
     micro = sub.add_parser("micro", help="exact solved 3x3 Quixo tablebase; NOT the 5x5 game")
     micro.add_argument("--board", default=".........", help="nine row-major cells from .XO")
     micro.add_argument("--turn", choices=("X", "O"), default="X")
+    census = sub.add_parser("census", help="exact D4 puzzle census; 3x3 full or 5x5 sparse")
+    census.add_argument("--size", type=int, choices=(3, 5), default=3)
+    census.add_argument("--max-stones", type=int, default=3)
+    census.add_argument("--family", choices=("P1_forced_win", "P2_unique_win",
+                        "P4_unique_nontrivial_reply", "unique_fastest_win", "unique_max_delay"))
+    census.add_argument("--verify", action="store_true")
     sub.add_parser("bench", help="use python -m quixoforge.bench for configured runs")
     args = ap.parse_args(argv)
+    if args.command == "census":
+        from .census import main as census_main
+        argv = ["--size", str(args.size), "--max-stones", str(args.max_stones)]
+        if args.family:
+            argv += ["--family", args.family]
+        if args.verify:
+            argv += ["--verify"]
+        census_main(argv)
+        return
     if args.command == "bench":
         bench_main([])
         return
