@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quixoforge"
-version = "1.2.0"
-description = "Exact Quixo puzzle census, independently checked 3x3 tablebase and reachable 5x5 sparse strata"
+version = "1.3.0"
+description = "Exact 5x5 one-ply tactical puzzles, independently checked 3x3 tablebase and sparse reachable strata"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{name = "QuixoForge contributors"}]
