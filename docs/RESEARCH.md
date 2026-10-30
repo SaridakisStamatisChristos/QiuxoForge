@@ -12,7 +12,7 @@ A horizontal/vertical/diagonal line of five identical nonblank marks wins, with 
 
 ### Boundary: legal-state validation
 
-`State` checks shape, value domain, side-to-move, and immutability. This is *structural* validation, NOT historical reachability. `replay(history)` establishes constructive reachability because every attempted move is checked, and a trace continuing after a win is rejected. `validate_history(target, history)` verifies the exact witness. Arbitrary standalone positions may be structurally valid but impossible to reach; solvers accept them only under the caller's explicit assumption that the board is meaningful. Deciding reachability without a witness is NOT implemented.
+`State` checks shape, value domain, side-to-move, and immutability. This is *structural* validation, NOT historical reachability. `replay(history)` establishes constructive reachability because every attempted move is checked, and a trace continuing after a win is rejected. `validate_history(target, history)` verifies the exact witness. Arbitrary standalone positions may be structurally valid but impossible to reach; solvers accept them only under the caller's explicit assumption that the board is meaningful. **An exact exhaustive reachability index is implemented for boards with at most three marked cubes, for a fixed starting player.** Positions with more marked cubes are explicitly `OUT_OF_SCOPE` for this index, never classified unreachable.
 
 ### Proven invariant: 44 opening moves
 
@@ -25,6 +25,21 @@ If a nonterminal state had no legal move for player P, every perimeter cube woul
 ### Proven invariant: nonblank occupancy never decreases
 
 A legal move selects either an empty cube (reinserted with a mark; occupancy +1) or a cube already bearing the mover's symbol (reinserted still bearing that symbol; occupancy unchanged). Shifting is a permutation of the remaining cubes. In particular, the number of each player's marks never decreases; its own turn increases by at most one and the other player's turn does not alter that count.
+
+## Exact low-occupancy reachability theorem and observed enumeration
+
+**Finite-domain completeness.** Let `C(s)` be the number of occupied cubes in state `s`. Every legal move selects a blank cube or one already bearing the mover's mark. The path shift preserves the other cube values and the reinserted cube is marked by the mover. Hence `C(next) - C(s) ∈ {0,1}`. For any fixed start `s0` and any target `t` with `C(t) <= K`, every prefix state along any legal path from `s0` to `t` must also have occupancy <= K. Therefore a complete breadth-first exploration of the subgraph with occupancy <= K is sufficient **and necessary** for reachability decisions in that target domain, even with arbitrary cycles and unbounded move counts. BFS parent links provide *shortest histories* by the standard nonnegative unit-edge BFS invariant. This is a mathematical proof about the transition model; it is **not** a proof-assistant or source-code correctness proof.
+
+`ReachabilityIndex.build(K, start=X|O)` exhaustively explores that finite domain without a depth cutoff, retaining complete state (25 cells and player to move), not quotienting by symmetry when producing histories. The two-player terminal rule is respected (no successors after a win). We constrain `K` to 0–3 to avoid unbounded memory/runtime costs. For `K=3`, there are at most `2 * sum_{i=0}^3 C(25,i) * 2^i = 39,302` structurally possible `(board,turn)` pairs; all 12,297 reachable states were independently re-enumerated with a separate bitboard breadth-first algorithm. They comprise 1,576 distinct D4 geometric orbits. The longest shortest legal history among these 12,297 states is 18 plies; **bounded-depth search to 3 plies would miss some reachable 3-mark states**.
+
+| Cap K | Reachable states per fixed starter | Examined legal transitions |
+|---|---:|---:|
+| 0 | 1 | 44 |
+| 1 | 17 | 704 |
+| 2 | 485 | 20,012 |
+| 3 | 12,297 | 498,328 |
+
+Counts are reproducible by `test_three_stone_complete_index_matches_independent_bitboard_graph` and `test_witness_shortest_path_matches_bitboard_bfs_distance`; transition counts include paths whose resulting occupancy exceeds the cap and are pruned from the search queue. Reachability counts apply to each specified starter, not a union over the two. `X` and `O` starters have equal counts due to the color/turn renaming symmetry, which is separate from geometric D4 reduction.
 
 ## Exact bounded proof semantics
 
@@ -53,7 +68,7 @@ This is a sound constructive AND/OR proof of a forced decisive outcome within `d
 ## Remaining research gaps
 
 1. Repetition/draw conventions and proof of the complete game-theoretic value from the starting position. The official rules do not supply a finite repetition draw rule in the cited two-player description; one must not invent it silently.
-2. Full arbitrary-board reachability (especially terminal simultaneous-line boards) without a legal move history.
+2. Arbitrary-board reachability with >=4 marked cubes (especially terminal simultaneous-line boards) without a legal move history. Extend the occupancy-complete index carefully with memory/cost budgets or new proof-based pruning.
 3. Verified performance improvement: D4 saves nodes on symmetric positions but canonicalization has overhead. Benchmark results depend on workload and hardware; validate speed with wider sampled positions and run-to-run variance.
 4. Formal machine-checked proof of source-level transition equivalence/invariants, e.g. a separate Lean model or independently extracted specification.
 5. Four-player team point orientation and correct player/team turn-order semantics, implemented as a separate game variant if requested.
