@@ -139,6 +139,24 @@ def validate_raw8(doc: dict) -> None:
         raise AssertionError("dense combinatorial rank domain mismatch")
 
 
+def validate_forced3(native: dict, oracle: dict) -> None:
+    if native.get("schema") != 1 or native.get("cap") != 7:
+        raise AssertionError("three-ply native cap/schema mismatch")
+    values = {
+        "new_exactly_three_orbits": 370,
+        "new_exactly_three_raw": 2880,
+        "unique_exactly_three_orbits": 64,
+        "unique_exactly_three_raw": 512,
+    }
+    for name, value in values.items():
+        if native.get(name) != value:
+            raise AssertionError(f"three-ply count mismatch {name}")
+    if oracle.get("exactly_three_orbits") != 370 or oracle.get("raw_state_weight") != 2880:
+        raise AssertionError("independent positive proof count disagrees")
+    if oracle.get("unique_forcing_first_action_orbits") != 64:
+        raise AssertionError("independent unique-first-action count disagrees")
+
+
 def main(argv=None) -> None:
     parser = argparse.ArgumentParser(description="Evidence-check native full-board Quixo outputs")
     parser.add_argument("--k5", type=Path, required=True)
@@ -148,12 +166,16 @@ def main(argv=None) -> None:
     parser.add_argument("--raw6", type=Path, required=True)
     parser.add_argument("--raw7", type=Path, required=True)
     parser.add_argument("--raw8", type=Path, required=True)
+    parser.add_argument("--f3", type=Path, required=True)
+    parser.add_argument("--f3-certified", type=Path, required=True)
     args = parser.parse_args(argv)
     for cap, file in ((5, args.k5), (6, args.k6), (7, args.k7), (8, args.k8)):
         validate_native(json.loads(file.read_text(encoding="utf8")), cap)
     validate_raw(json.loads(args.raw6.read_text(encoding="utf8")))
     validate_raw7(json.loads(args.raw7.read_text(encoding="utf8")))
     validate_raw8(json.loads(args.raw8.read_text(encoding="utf8")))
+    validate_forced3(json.loads(args.f3.read_text(encoding="utf8")),
+                     json.loads(args.f3_certified.read_text(encoding="utf8")))
     print("PASS: native 5x5 K5-K8 families, D4 partitions, raw K6 and raw K7 independent BFS plus tactical negatives")
 
 
