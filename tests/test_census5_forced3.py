@@ -55,3 +55,56 @@ def test_forced_three_is_not_restricted_to_the_five_cube_future_domain():
     position = (0, 0, X)
     assert forcing_first_indices_three(position) == ()
     assert _winner(position) is None
+
+
+def test_forced_three_matches_independent_full_reference_on_reachable_k6_samples():
+    """Reference enumerates every attacker/defender/attacker legal action."""
+    from quixoforge.model import initial
+    from quixoforge.bitboard import Bits
+    rng = Random(0x5C0606)
+    tested = 0
+    for trial in range(18):
+        state = initial()
+        for ply in range(8 + trial % 7):
+            options = reference.legal_moves(state)
+            if not options:
+                break
+            # Try to sample six-cube reachable states, not arbitrary drawings.
+            blanks = [m for m in options if state.cells[m.index] == 0]
+            choice = rng.choice(blanks if blanks and state.cells.count(0) > 19
+                                and rng.random() < .75 else options)
+            state = reference.apply(state, choice)
+            if state.cells.count(0) < 19:
+                break
+        if reference.winner(state) is not None:
+            continue
+        bit = Bits.from_state(state)
+        fast = {_TEMPLATE[i][0] for i in forcing_first_indices_three(
+            (bit.x, bit.o, bit.turn)
+        )}
+        owner = state.turn
+        expected = set()
+        for first in reference.legal_moves(state):
+            after = reference.apply(state, first)
+            if reference.winner(after) == owner:
+                expected.add(first)
+                continue
+            if reference.winner(after) is not None:
+                continue
+            forced = True
+            for defender in reference.legal_moves(after):
+                middle = reference.apply(after, defender)
+                result = reference.winner(middle)
+                if result == owner:
+                    continue
+                if result is not None or not any(
+                    reference.winner(reference.apply(middle, last)) == owner
+                    for last in reference.legal_moves(middle)
+                ):
+                    forced = False
+                    break
+            if forced:
+                expected.add(first)
+        assert fast == expected
+        tested += 1
+    assert tested >= 12
