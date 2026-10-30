@@ -1,0 +1,29 @@
+{
+  "depth": 2,
+  "executed_utc": "2026-10-30T16:34:00.269426+00:00",
+  "implementations": {
+    "bitboard": {
+      "max_ns": 29824794,
+      "median_ns": 21455256.0,
+      "median_search_nodes": 533.0,
+      "min_ns": 7053369
+    },
+    "reference": {
+      "max_ns": 33961476,
+      "median_ns": 21939031.5,
+      "median_search_nodes": 533.0,
+      "min_ns": 7263383
+    }
+  },
+  "machine": "x86_64",
+  "notes": "observed local exploratory measurement only; no speedup claim",
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "plies": 9,
+  "python": "3.13.5",
+  "repeats": 5,
+  "requested_count": 8,
+  "samples": 8,
+  "schema": 1,
+  "scope": "local wall-clock exploratory; no cross-platform speed claim",
+  "seed": 711
+}

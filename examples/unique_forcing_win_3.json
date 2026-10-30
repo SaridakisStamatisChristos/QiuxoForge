@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "source": "legal replay",
+  "history": [
+    "15:R",
+    "1:R",
+    "10:R",
+    "22:L",
+    "22:U",
+    "21:R",
+    "1:D",
+    "23:L",
+    "19:D",
+    "3:D",
+    "24:U",
+    "3:R",
+    "15:D",
+    "23:R",
+    "19:L",
+    "19:D",
+    "5:R",
+    "10:D",
+    "15:R",
+    "14:D",
+    "10:U",
+    "1:R",
+    "5:D"
+  ],
+  "depth": 3,
+  "unique": true,
+  "solutions": [
+    "10:R"
+  ],
+  "proof": {
+    "outcome": "WIN",
+    "move": "10:R",
+    "child": {
+      "outcome": "LOSS",
+      "replies": {
+        "0:R": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "0:D": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "1:L": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "1:R": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "1:D": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "2:L": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "2:R": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "2:D": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "5:R": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "5:U": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "5:D": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "9:L": {
+          "outcome": "WIN",
+          "terminal": true
+        },
+        "9:U": {
+          "outcome": "WIN",
+          "move": "3:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "9:D": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "10:R": {
+          "outcome": "WIN",
+          "terminal": true
+        },
+        "10:U": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "10:D": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "20:R": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "20:U": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "22:L": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "22:R": {
+          "outcome": "WIN",
+          "move": "10:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        },
+        "22:U": {
+          "outcome": "WIN",
+          "move": "5:R",
+          "child": {
+            "outcome": "LOSS",
+            "terminal": true
+          }
+        }
+      }
+    }
+  }
+}
