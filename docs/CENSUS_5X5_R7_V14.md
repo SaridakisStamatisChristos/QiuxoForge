@@ -1,4 +1,4 @@
-# QuixoForge — complete finite-domain 5×5 census through seven occupied cubes (R7 v1.4)
+# QuixoForge — complete finite-domain 5×5 census through eight occupied cubes (R7 v1.4)
 
 ## Scientific contract
 
@@ -20,9 +20,10 @@ All numerical counts in this table are outputs of the native exhaustive D4 quoti
 | 5 | 2,055,382 | 258,081 | 0 | 120 | 46 |
 | 6 | 16,353,436 | 2,048,650 | 80 | 3,674 | 1,202 |
 | 7 | 99,693,740 | 12,475,164 | 2,070 | 60,180 | 20,283 |
-| **Total ≤7** | **118,302,019** | **14,807,130** | **2,150** | **63,974** | **21,531** |
+| 8 | 484,731,202 | 60,627,546 | 31,291 | 634,614 | 222,426 |
+| **Total ≤8** | **603,033,221** | **75,434,676** | **33,441** | **698,588** | **243,957** |
 
-Raw winning-root counts: K5 936 (unique 360); K6 29,140 (unique 9,508); K7 480,424 (unique 161,920); total 510,500 (unique 171,788).
+Raw winning-root counts: K5 936 (unique 360); K6 29,140 (unique 9,508); K7 480,424 (unique 161,920); K8 5,071,268 (unique 1,777,204); total ≤8: 5,581,768 (unique 1,948,992).
 
 ## Independent verification
 
@@ -42,9 +43,49 @@ Every square rotation/reflection preserves extraction eligibility, insertion pat
 
 The Python three-ply AND/OR solver in quixoforge.census5_forced3 is not a globally solved game. Its algebraic first-action threats invert each of 44 insertion mappings against each of the twelve winning lines; every potential winning child is then checked by the actual winner rule. A first action qualifies as forcing by ply three if every legal defender response either already loses or permits an immediate winning attacker reply. This is necessary and sufficient for this *finite* tactical horizon.
 
+## Eight-cube native extension and independent-verifier scope
+
+The optimized native implementation has additionally traversed all
+K≤8 reachable 5×5 states: **603,033,221** raw board/turn positions
+in **75,434,676** D4 classes, with **698,588** geometrically distinct
+win-in-one classes, **243,957** of which have exactly one immediately
+winning legal first action. The exactly-eight-cube layer contains
+484,731,202 states, 60,627,546 position classes, 31,291 terminal
+classes, 634,614 immediate-win classes, and 222,426 unique-win classes.
+
+The native K8 run completed locally in 247.984 seconds with
+1,639,552 KiB observed maximum RSS. A completely separate full raw
+K8 enumeration (tools/verify8_dense_raw.cpp) uses 32-bit
+collision-free combinadic state ranks and an exact visited bitset.
+Its verification of all raw reachable and tactical counts is a separate
+gate: **do not upgrade K8 to VERIFIED before that independent run
+finishes**.
+
+A second mathematical invariant gives a structural upper bound for
+*every* occupancy, independently of reachability. Let [x^k] denote
+the k-th ordinary polynomial coefficient. Then
+
+```text
+B_k = [x^k] (
+  (1+2x)^25 + 2(1+2x)(1+2x^4)^6
+  + (1+2x)(1+2x^2)^12
+  + 4(1+2x)^5(1+2x^2)^10
+) / 4
+```
+
+counts all structurally possible (board,turn) D4 orbits with k
+occupied cubes. **B_8 = 69,278,970**, so the native K8 reachable
+count 60,627,546 lies below its independently derived upper bound.
+All 26 coefficients are produced by tools/structural_orbit_bounds.py.
+
+Furthermore, each player's mark count is separately monotone.
+See docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md for the proved
+exact two-dimensional fixed-point layer recurrence, which enables
+out-of-core or parallel census beyond the current RAM-limited regime.
+
 ## Global mathematical bounds, and the unsolved census
 
-Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring classes; with both possible players to move, an upper bound of **211,836,900,942** board-turn classes, many unreachable. The independently reproduced K≤7 census establishes **21,531 unique-win-in-one** geometric classes as a rigorous computational lower bound for the full game, conditional on the documented rules and D4 group action. It does **not** determine the global exact number of reachable winning puzzles, all finite-depth puzzles, eventual unique wins, or subjectively meaningful human puzzles. Do not extrapolate percentages or label these counts the global answer.
+Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring classes; with both possible players to move, an upper bound of **211,836,900,942** board-turn classes, many unreachable. The independently reproduced K≤7 census establishes **21,531 unique-win-in-one** geometric classes, and the additional native-computed K8 layer raises the current full-board lower-bound candidate to **243,957 classes**, conditional on the documented rules and D4 group action. It does **not** determine the global exact number of reachable winning puzzles, all finite-depth puzzles, eventual unique wins, or subjectively meaningful human puzzles. Do not extrapolate percentages or label these counts the global answer.
 
 ## One-command reproducibility and evidence checks
 
@@ -52,12 +93,15 @@ Burnside on all 25-cell colorings yields exactly 105,918,450,471 D4 coloring cla
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/census5_native.cpp -o /tmp/qf-census5
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify5_native_raw.cpp -o /tmp/qf-raw5
 c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify7_dense_raw.cpp -o /tmp/qf-raw7
+c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify8_dense_raw.cpp -o /tmp/qf-raw8
 /tmp/qf-census5 5 > /tmp/qf-k5.json
 /tmp/qf-census5 6 > /tmp/qf-k6.json
 /tmp/qf-census5 7 20000000 > /tmp/qf-k7.json
+/tmp/qf-census5 8 100000000 > /tmp/qf-k8.json
 /tmp/qf-raw5 6 > /tmp/qf-raw6.json
 /tmp/qf-raw7 7 125000000 > /tmp/qf-raw7.json
-python tools/check_native_census.py --k5 /tmp/qf-k5.json --k6 /tmp/qf-k6.json --k7 /tmp/qf-k7.json --raw6 /tmp/qf-raw6.json --raw7 /tmp/qf-raw7.json
+/tmp/qf-raw8 8 700000000 > /tmp/qf-raw8.json
+python tools/check_native_census.py --k5 /tmp/qf-k5.json --k6 /tmp/qf-k6.json --k7 /tmp/qf-k7.json --k8 /tmp/qf-k8.json --raw6 /tmp/qf-raw6.json --raw7 /tmp/qf-raw7.json --raw8 /tmp/qf-raw8.json
 python -m quixoforge.census5_forced3 --verify
 python -m pytest -q
 sha256sum -c SHA256SUMS
@@ -72,6 +116,7 @@ Invalid occupancy caps or resource budgets fail instead of returning a misleadin
 | 5×5 official board, move and terminal semantics | VERIFIED for K≤5 against independent Python implementation | Now independently reproduced through K7, including complete negative classifications |
 | Reachability K≤6 | VERIFIED by native D4 and independent raw tuple BFS | Exact only within declared occupancy |
 | Reachability K=7 | VERIFIED via two independent exhaustive native graph traversals | Exact within the declared K≤7 domain only |
+| Reachability and immediate-win classification K=8 | NATIVE-COMPUTED; independent full raw check running | Local native output pinned; not yet globally verified |
 | Immediate-win objective K≤5 | VERIFIED by multiple independently implemented paths | Does not imply eventual forced-win strategy |
 | Immediate-win objective K6–7 | VERIFIED by independently classified raw winning-action counts and D4 partition | Still not eventual game-theoretic strategy |
 | Three-ply K≤5 roots | COMPUTED with fast preimage/AND-OR algorithm | CI and independent negative-certificate validation pending |
