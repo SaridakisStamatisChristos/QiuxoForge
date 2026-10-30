@@ -119,7 +119,7 @@ See [the 5x5 tactical census](docs/CENSUS_5X5_TACTICS.md) for definitions, metho
 
 ## Large-scale 5x5 puzzle census (native R7 v1.4)
 
-The native full-board 5×5 D4-quotient enumerator has now completely traversed **118,302,019 legally reachable board/turn states with ≤7 marks** in **14,807,130 geometric classes**, including **63,974 win-in-one puzzle classes** and **21,531 classes with exactly one immediately winning legal action**. Those counts are finite-domain computations, **not** a global count of all meaningful puzzles. An independently coded, unsymmetrized C++ tuple-array BFS confirms all **18,608,279 states with ≤6 marks**, including the 552 terminal states in occupancy six. A second independent raw tuple-array BFS has now also reconstructed **all 118,302,019 states through seven cubes** and independently checked all immediate-winning actions; the raw counts 510,500 / 171,788 exactly match the D4 classifier after weighting orbit sizes.
+The native full-board 5×5 D4-quotient enumerator has now completely traversed **603,033,221 legally reachable board/turn states with ≤8 marks** in **75,434,676 geometric classes**, including **698,588 win-in-one puzzle classes** and **243,957 classes with exactly one immediately winning legal action**. Those counts are finite-domain computations, **not** a global count of all meaningful puzzles. An independently coded, unsymmetrized C++ tuple-array BFS confirms all **18,608,279 states with ≤6 marks**, including the 552 terminal states in occupancy six. An independent raw tuple-array BFS has fully reconstructed **all 118,302,019 states through seven cubes** and independently checked the 510,500 / 171,788 winning/unique raw-action totals. The larger eight-cube figures are native-computed, with a separate independent full raw eight-cube check required before they are certified.
 
 **One-command full verification** (C++17, Python 3.10+ and POSIX shell):
 
@@ -132,9 +132,11 @@ Or run the tools separately:
 ~~~sh
 c++ -O3 -std=c++17 tools/census5_native.cpp -o /tmp/qf-census5
 c++ -O3 -std=c++17 tools/verify5_native_raw.cpp -o /tmp/qf-raw5
-/tmp/qf-census5 7 20000000
+/tmp/qf-census5 8 100000000
 /tmp/qf-raw5 6
 python -m quixoforge.census5_forced3 --verify
 ~~~
 
 See [formal results, claims and reproduction gates](docs/CENSUS_5X5_R7_V14.md). The previous Python `census5` command remains valid for the original five-cube witness-export domain; the native executable is for large-scale reproducible counting.
+
+The exact structural D4 generating function for all 25 occupancy layers is implemented in `tools/structural_orbit_bounds.py`. A proved two-color monotone recurrence that partitions the graph by X/O mark counts is documented at [Two-color layer saturation](docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md). Neither is a claim that the full global puzzle count has been computed.
