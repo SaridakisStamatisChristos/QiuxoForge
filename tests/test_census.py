@@ -27,6 +27,7 @@ def test_exact_3x3_complete_independently_verified():
         "P1_forced_win": (15167, 2062),
         "P2_unique_win": (1648, 212),
         "P4_unique_nontrivial_reply": (384, 48),
+        "adaptive_response_win": (320, 40),
         "unique_fastest_win": (2768, 362),
         "multiple_winning_actions": (13519, 1850),
         "forced_loss": (5090, 727),
@@ -35,6 +36,7 @@ def test_exact_3x3_complete_independently_verified():
     for name, (raw, orbits) in expected.items():
         assert report["families"][name]["raw_states"] == raw
         assert report["families"][name]["orbits"] == orbits
+    assert report["orbit_remoteness_hist"]["adaptive_response_win_remoteness"] == {"3": 26, "5": 10, "7": 4}
     assert report["orbit_remoteness_hist"]["P2_remoteness"] == {
         "1": 164, "3": 34, "5": 10, "7": 4
     }
@@ -95,13 +97,16 @@ def test_unique_puzzle_corpus_all_solutions_and_histories_replay():
     tb = Tablebase.load()
     unique = records_3x3("P2_unique_win")
     nontrivial = records_3x3("P4_unique_nontrivial_reply")
+    adaptive = records_3x3("adaptive_response_win")
     assert len(unique) == 212
     assert len(nontrivial) == 48
+    assert len(adaptive) == 40
     assert len({row["id"] for row in unique}) == len(unique)
     assert len({row["id"] for row in nontrivial}) == len(nontrivial)
     unique_ids = {row["board"] + row["turn"] for row in unique}
     assert all(row["board"] + row["turn"] in unique_ids for row in nontrivial)
-    for record in unique + nontrivial:
+    assert {r["board"] + r["turn"] for r in adaptive} <= {r["board"] + r["turn"] for r in nontrivial}
+    for record in unique + nontrivial + adaptive:
         state = initial(3)
         for token in record["shortest_legal_history"]:
             state = game.apply(state, Move.parse(token))

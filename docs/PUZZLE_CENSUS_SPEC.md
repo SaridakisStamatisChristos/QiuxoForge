@@ -23,7 +23,7 @@ Different actions with the same resulting state remain different solutions.
 - P4_unique_nontrivial_reply: P2 with minimum forced-win remoteness
   >=3 plies, and at least two legal opponent replies after its winning move.
   This is a branch-complexity proxy, **not human-rated difficulty**.
-- unique_fastest_win: exactly one winning action minimizes eventual forced-win
+- adaptive_response_win: P4 with two nonterminal opponent replies whose sets\n  of eventually winning first actions for the attacker are disjoint. Thus a\n  fixed next action cannot solve both reply positions. This is an objective\n  contingent-reasoning filter, not a human difficulty rating.\n- unique_fastest_win: exactly one winning action minimizes eventual forced-win
   remoteness; distinct from exactly one eventually winning action.
 - multiple_winning_actions: P1 with at least two winning first actions.
 - forced_loss: every legal action leads to a WIN child.

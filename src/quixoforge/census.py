@@ -24,7 +24,7 @@ from . import reference, symmetry
 
 FAMILIES = (
     "P0_nonterminal", "P1_forced_win", "P2_unique_win",
-    "P4_unique_nontrivial_reply", "unique_fastest_win",
+    "P4_unique_nontrivial_reply", "adaptive_response_win", "unique_fastest_win",
     "multiple_winning_actions", "forced_loss", "unique_max_delay",
     "terminal",
 )
@@ -118,6 +118,23 @@ def _facts(key, entries, game):
             successor = game.apply(state, wins[0])
             if value.remoteness >= 3 and len(game.legal_moves(successor)) >= 2:
                 families.add("P4_unique_nontrivial_reply")
+                # Check whether different opponent replies need incompatible
+                # next winning actions; terminal reply blunders need no answer.
+                responses = []
+                for reply in game.legal_moves(successor):
+                    next_state = game.apply(successor, reply)
+                    if game.winner(next_state) is not None:
+                        continue
+                    answers = frozenset(
+                        action for action in game.legal_moves(next_state)
+                        if entries[key_of(game.apply(next_state, action))].outcome == Outcome.LOSS
+                    )
+                    if not answers:
+                        raise AssertionError("forced-win reply without a winning response")
+                    responses.append(answers)
+                if any(a.isdisjoint(b) for i, a in enumerate(responses)
+                       for b in responses[i+1:]):
+                    families.add("adaptive_response_win")
         else:
             families.add("multiple_winning_actions")
         if len(fastest) == 1:
@@ -165,6 +182,8 @@ def census_3x3(tablebase: Tablebase | None = None) -> dict:
             horizons["P1_remoteness"][horizon] += 1
             if "P2_unique_win" in families:
                 horizons["P2_remoteness"][horizon] += 1
+            if "adaptive_response_win" in families:
+                horizons["adaptive_response_win_remoteness"][horizon] += 1
 
     fixed_sum = sum(
         sum(transform_key(key, m) == key for key in entries)
@@ -261,7 +280,7 @@ def _histories3():
 def records_3x3(family: str):
     """Return independently replayable geometric-unique puzzles for one family."""
     if family not in ("P1_forced_win", "P2_unique_win", "P4_unique_nontrivial_reply",
-                      "unique_fastest_win", "unique_max_delay"):
+                      "adaptive_response_win", "unique_fastest_win", "unique_max_delay"):
         raise ValueError("unsupported objective family")
     entries = Tablebase.load()._entries
     game = VariantReference(3)
@@ -304,7 +323,7 @@ def main(argv=None):
     ap.add_argument("--size", type=int, choices=(3, 5), default=3)
     ap.add_argument("--max-stones", type=int, default=3)
     ap.add_argument("--family", choices=("P1_forced_win", "P2_unique_win",
-                    "P4_unique_nontrivial_reply", "unique_fastest_win", "unique_max_delay"))
+                    "P4_unique_nontrivial_reply", "adaptive_response_win", "unique_fastest_win", "unique_max_delay"))
     ap.add_argument("--verify", action="store_true", help="run independent graph-and-symmetry verifier")
     args = ap.parse_args(argv)
     if args.family and args.size != 3:

@@ -62,6 +62,21 @@ def _result_counters(graph, game):
                     chosen.append("P2_unique_win")
                     if rem >= 3 and len(game.legal_moves(winning[0][1])) >= 2:
                         chosen.append("P4_unique_nontrivial_reply")
+                        response_sets = []
+                        for defender_action in game.legal_moves(winning[0][1]):
+                            returned = game.apply(winning[0][1], defender_action)
+                            if game.winner(returned) is not None:
+                                continue
+                            good_actions = frozenset(
+                                action for action in game.legal_moves(returned)
+                                if graph.outcomes[game.apply(returned, action)] == Outcome.LOSS
+                            )
+                            if not good_actions:
+                                raise AssertionError("winning response missing")
+                            response_sets.append(good_actions)
+                        if any(a.isdisjoint(b) for i, a in enumerate(response_sets)
+                               for b in response_sets[i+1:]):
+                            chosen.append("adaptive_response_win")
                 else:
                     chosen.append("multiple_winning_actions")
                 if sum(graph.remoteness[child] == fastest_distance for _, child in winning) == 1:
@@ -69,6 +84,8 @@ def _result_counters(graph, game):
                 weighted_horizons["P1_remoteness"][str(rem)] += stabilizer
                 if len(winning) == 1:
                     weighted_horizons["P2_remoteness"][str(rem)] += stabilizer
+                if "adaptive_response_win" in chosen:
+                    weighted_horizons["adaptive_response_win_remoteness"][str(rem)] += stabilizer
             elif outcome == Outcome.LOSS:
                 chosen.append("forced_loss")
                 if sum(graph.remoteness[child] == rem - 1 for _, child in children) == 1:

@@ -101,3 +101,7 @@ proofs, and docs/PUZZLE_CENSUS_RESULTS.md for complete distributions,
 reproduction and limitations. The puzzle record stream includes complete
 winning first-action sets and shortest legal setup histories. Family labels
 measure mathematical forced-win structure, not human-rated difficulty.
+
+An additional exact contingent-response family has **40 D4 puzzle classes**:
+two possible opposing replies require disjoint sets of next winning moves.
+This is a stricter mathematical criterion than the 48-class P4 family.

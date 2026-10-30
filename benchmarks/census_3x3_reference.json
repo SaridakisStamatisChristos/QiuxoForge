@@ -92,6 +92,13 @@
         "4": 4,
         "8": 52
       }
+    },
+    "adaptive_response_win": {
+      "raw_states": 320,
+      "orbits": 40,
+      "size_hist": {
+        "8": 40
+      }
     }
   },
   "D4_remoteness_hist": {
@@ -104,6 +111,11 @@
     "P2_remoteness": {
       "1": 164,
       "3": 34,
+      "5": 10,
+      "7": 4
+    },
+    "adaptive_response_win_remoteness": {
+      "3": 26,
       "5": 10,
       "7": 4
     }

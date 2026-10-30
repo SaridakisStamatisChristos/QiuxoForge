@@ -63,7 +63,7 @@ def main(argv=None):
     census.add_argument("--size", type=int, choices=(3, 5), default=3)
     census.add_argument("--max-stones", type=int, default=3)
     census.add_argument("--family", choices=("P1_forced_win", "P2_unique_win",
-                        "P4_unique_nontrivial_reply", "unique_fastest_win", "unique_max_delay"))
+                        "P4_unique_nontrivial_reply", "adaptive_response_win", "unique_fastest_win", "unique_max_delay"))
     census.add_argument("--verify", action="store_true")
     sub.add_parser("bench", help="use python -m quixoforge.bench for configured runs")
     args = ap.parse_args(argv)

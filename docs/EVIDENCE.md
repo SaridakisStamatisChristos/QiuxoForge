@@ -100,3 +100,6 @@ Scope: full playable rules and core code shipped, **not** an independent reprodu
 
 Every R23–R27 claim requires BOTH supported Python CI checks and the
 current branch head SHA, not a stale green predecessor.
+
+- R29 / VERIFIED after green CI: adaptive-response predicate (two opponent
+  replies with disjoint next winning move sets), 320 3x3 states / 40 orbits.
