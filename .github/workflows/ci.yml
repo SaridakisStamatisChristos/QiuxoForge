@@ -31,6 +31,22 @@ jobs:
       - name: Independently reproduce all 2.25M raw 5x5 reachable states (Python 3.13)
         if: matrix.python-version == '3.13'
         run: python tools/verify_5x5_raw.py --max-stones 5
+      - name: Compile native C++17 census and independent raw validator
+        if: matrix.python-version == '3.13'
+        run: |
+          c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/census5_native.cpp -o /tmp/qf-census5
+          c++ -O3 -std=c++17 -Wall -Wextra -pedantic tools/verify5_native_raw.cpp -o /tmp/qf-raw5
+      - name: Exhaustive real 5x5 K5-K7 puzzle census and independent K6 raw BFS
+        if: matrix.python-version == '3.13'
+        run: |
+          /tmp/qf-census5 5 > /tmp/qf-k5.json
+          /tmp/qf-census5 6 > /tmp/qf-k6.json
+          /tmp/qf-census5 7 20000000 > /tmp/qf-k7.json
+          /tmp/qf-raw5 6 > /tmp/qf-raw6.json
+          python tools/check_native_census.py --k5 /tmp/qf-k5.json --k6 /tmp/qf-k6.json --k7 /tmp/qf-k7.json --raw6 /tmp/qf-raw6.json
+      - name: Exact win-by-three enumeration on all reachable K5 roots
+        if: matrix.python-version == '3.13'
+        run: python -m quixoforge.census5_forced3 --verify
       - name: Check release manifest SHA256
         run: sha256sum -c SHA256SUMS
       - name: Independently check committed proof certificates
