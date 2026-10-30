@@ -116,3 +116,19 @@ quixoforge census5 --max-stones 5 --family unique_win_in_one
 ```
 
 See [the 5x5 tactical census](docs/CENSUS_5X5_TACTICS.md) for definitions, methods, evidence, and remaining validation gates.
+
+## Large-scale 5x5 puzzle census (native R7 v1.4)
+
+The native full-board 5×5 D4-quotient enumerator has now completely traversed **118,302,019 legally reachable board/turn states with ≤7 marks** in **14,807,130 geometric classes**, including **63,974 win-in-one puzzle classes** and **21,531 classes with exactly one immediately winning legal action**. Those counts are finite-domain computations, **not** a global count of all meaningful puzzles. An independently coded, unsymmetrized C++ tuple-array BFS confirms all **18,608,279 states with ≤6 marks**, including the 552 terminal states in occupancy six. The K=7 state/tactical totals have not yet been independently exhaustively reconstructed by a separate engine.
+
+Reproduce with C++17 and Python 3.10+:
+
+~~~sh
+c++ -O3 -std=c++17 tools/census5_native.cpp -o /tmp/qf-census5
+c++ -O3 -std=c++17 tools/verify5_native_raw.cpp -o /tmp/qf-raw5
+/tmp/qf-census5 7 20000000
+/tmp/qf-raw5 6
+python -m quixoforge.census5_forced3 --verify
+~~~
+
+See [formal results, claims and reproduction gates](docs/CENSUS_5X5_R7_V14.md). The previous Python `census5` command remains valid for the original five-cube witness-export domain; the native executable is for large-scale reproducible counting.
