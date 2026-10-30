@@ -175,6 +175,7 @@ Counts solve(int cap,U maxorbits){
    if(!wins && stones(s.turn?s.o:s.x)>=3){
      const int forced=forced_win_by_three_first_actions(s);
      if(forced){
+       std::cerr<<"F3|"<<s.x<<"|"<<s.o<<"|"<<(s.turn?1:0)<<"|"<<forced<<"|"<<os<<"\n";
        totals.new3Orbits++;totals.new3Raw+=os;
        if(forced==1){totals.unique3Orbits++;totals.unique3Raw+=os;}
      }
