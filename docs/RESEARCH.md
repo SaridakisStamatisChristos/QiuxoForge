@@ -2,7 +2,7 @@
 
 ## Source of rules and scope
 
-Gigamic, *QUIXO Rules of the Game*, March 2017, English section, page 4, https://export.gigamic.com/wp-content/uploads/2021/01/INS-RULES_QUIXO_03-2017.pdf . Only the **two-player** variant is implemented. The official four-player team rules require oriented point markings and asymmetric teammate selection. They are not equivalent to a two-player game with four turn-taking players.
+Gigamic, *QUIXO Rules of the Game*, March 2017, English section, page 4, https://export.gigamic.com/wp-content/uploads/2021/01/INS-RULES_QUIXO_03-2017.pdf . Both the **two-player** and **four-player** variants are implemented separately. Four-player team rules require oriented point markings and asymmetric teammate selection; they are not equivalent to a two-player game with four turn-taking players.
 
 ## Position
 
@@ -71,6 +71,26 @@ This is a sound constructive AND/OR proof of a forced decisive outcome within `d
 2. Arbitrary-board reachability with >=4 marked cubes (especially terminal simultaneous-line boards) without a legal move history. Extend the occupancy-complete index carefully with memory/cost budgets or new proof-based pruning.
 3. Verified performance improvement: D4 saves nodes on symmetric positions but canonicalization has overhead. Benchmark results depend on workload and hardware; validate speed with wider sampled positions and run-to-run variance.
 4. Formal machine-checked proof of source-level transition equivalence/invariants, e.g. a separate Lean model or independently extracted specification.
-5. Four-player team point orientation and correct player/team turn-order semantics, implemented as a separate game variant if requested.
+5. Four-player human consultation/tournament protocols are social controls and deliberately excluded from the engine. Four-player oriented points and seat progression are now implemented in both `teams` and `team_bitboard`.
 
 No AI-generated statement in this document is represented as a proof-assistant-verified theorem.
+
+## Four-player team model (v1.0)
+
+A four-player position is `(point[25], seat, ply)`; `point ∈ {-1,0,1,2,3}` where `-1` is a blank cube and any other value indicates a marked cube pointing toward the numbered physical seat (north/east/south/west clockwise). `point=0/2` denotes X/team-even and `point=1/3` denotes O/team-odd. `seat = ply mod 4`, and the teammates are 0/2 and 1/3.
+
+For `ply < 4` (first round), only blank cubes may be extracted; otherwise a cube may be extracted iff blank or `point == seat`. The selected perimeter cube may be shifted toward any *other* end of its row/column. The reinserted mark points either to the current seat or its opposite teammate. If no cube is selectable and the position is not terminal, a compulsory pass advances `seat`, leaving the board fixed. A terminal board is final and has no successors. Winner for a double-line terminal position is the team whose seat is next: the preceding mover's opposing team wins.
+
+The optimized four-player model retains four disjoint 25-bit seat-pointer masks and shifts their contents with a separate algorithm. The geometric D4 transformations of the two-player board are **not blindly copied** to the four-player game: a reflection reverses seating orientation relative to clockwise turn order, and even rotations would require synchronized transforms of seat identities and the phase. Consequently four-player search uses direct hashed keys `(four masks, seat, min(ply,4))` and never claims an unsafe D4 quotient. All solver values remain bounded as in the two-player rules.
+
+## Practical opponent / heuristic horizon (v1.0)
+
+`AlphaBetaEngine` computes exact negamax for a **chosen finite depth using a heuristic leaf evaluation**. This is not an exact Quixo game-theoretic value. A position's static heuristic sums open line potential with weights `[0,2,12,80,650,5000]` and excludes opponent-contested rows; both-ended lines, direct terminal wins/losses and double-line precedence are handled by the terminal oracle before evaluating. Alpha-beta pruning is sound for the finite-depth negamax objective, and D4 transposition keys include depth and bound type (`LOWER/UPPER/EXACT`). The stored best action is in canonical coordinates and is transformed back on a cache hit. Only completely finished iterative-deepening depths are exposed as recommendations when the node budget is exhausted.
+
+A separate independent reference minimax with no pruning checks the same fixed-depth *heuristic objective* for selected workloads. This proves equality of the sampled results, not strength superiority. See `engine_bench` for exact parameters and scores validated before timing.
+
+## Game-agnostic proof trees and four-player tactical examples
+
+`generic_proof.produce` and `generic_proof.verify` use only the `FiniteGame` protocol and `str(move)` as unambiguous action identifiers. For a `WIN` certificate they verify one legal winning branch recursively; for `LOSS` certificates they compare the complete reply-key set against every legal action and verify every branch. A terminal leaf is checked against the winner reported by the selected game model; no outcome is certified from a nonterminal horizon-zero leaf. The four-player generator uses `BitboardFourPlayerGame` to produce a certificate and the independent list-based `FourPlayerGame` to verify it. `team_puzzles.check` also recomputes the complete first-move solution set with both models and verifies minimal proven horizon.
+
+For a forced pass, the singleton action is `PASS`, and the universal branch must include it. The fixture `examples/team_forcing_one.json` is a replayable witness of a four-seat tactical win at depth 1 with two winning point-direction choices; it is **not** claimed to have a unique first action. The two-player fixtures are independently verified by `verify_examples`.

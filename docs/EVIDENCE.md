@@ -14,7 +14,7 @@
 | R08 | Automated tests | user | executable local suite and configured CI | local VERIFIED; CI status requires GitHub run |
 | R09 | Extensibility | user | game protocol apart from Quixo internals | `FiniteGame` and toy-game test; local VERIFIED for minimal interface |
 | R10 | Exhaustive verification where feasible | user | scope-bounded exhaustive edge cases | complete opening two-ply tree + 12,297-state occupancy<=3 graph, independently re-enumerated; VERIFIED for finite scope, full tree UNVERIFIED |
-| R11 | Official 4-player team variant | implied by 'exact game rules' | oriented cubes and teammate turn semantics | NOT IMPLEMENTED; PARTIAL scope, clearly excluded |
+| R11 | Official 4-player team variant | implied by 'exact game rules' | oriented cubes and teammate turn semantics | two independent engines + random game differential and pass/first-round tests; VERIFIED for executed coverage |
 | R12 | Defer UI and infrastructure | user | headless package only, minimal CI | local VERIFIED |
 | R13 | Exact unrestricted-depth sparse-state reachability | domain follow-up | for <=3 marks decide yes/no with shortest witness, independently enumerate closure | reference BFS/bitboard BFS set equality, 498,328 tested edges, D4 covariance, shortest-distance checks; local VERIFIED (domain only) |
 
@@ -22,7 +22,7 @@
 
 ## Assumptions and applicability
 
-- A01 (medium): Two-player match is the core research target; four-player variant remains separate and unimplemented, not a silent simplification.
+- A01 (medium): Two-player and four-player variants have separate state/transition modules; four-player bitboard engine intentionally does not reuse two-player D4 transformations.
 - A02 (high): Players announce a winning line promptly; the engine resolves the position immediately, not human announcement/retraction disputes.
 - A03 (high): Infinite repetition has no automatic draw. Bounded solver returns `UNKNOWN`, never substitutes an invented draw convention.
 - A04 (medium): Proof certificates target bounded tactical outcomes rather than general Quixo game-theoretic solution.
@@ -42,7 +42,7 @@
 
 - Initial tests had two incorrect test expectations (bogus always-failing conditional test and toy-game outcome inversion). Repaired tests, no production rule changes; rerun suite passed.
 - Hard performance superiority gate is NOT closed: first measured depths showed similar runtime. No benchmark manipulation or doctored numbers.
-- PDF source independent visual screenshot attempt failed due provider cache miss; original rulebook textual extraction was accessible.
+- Historic v0.2 PDF provider issue has since been resolved: rulebook text and PDF screenshot were inspected during v1.0 development.
 
 ## Next evidence gates
 
@@ -58,3 +58,13 @@
 - **VERIFY**: independent optimized BFS enumerates all 12,297 reachable states and agrees with reference BFS on all states and all 498,328 examined transitions (X starter, cap 3); D4 covariance tested on every reachable state; 1,576 geometric orbits observed. The two separate BFS shortest-distance maps agree on all reachable cap-3 positions. Structural states with impossible mark histories reject as expected.
 - **FALSIFY**: blank board with opposite turn, marks confined to an impossible center-only first move, all-X 3-cube position, out-of-domain target, invalid cap/start and malformed CLI inputs explicitly tested. `OUT_OF_SCOPE` never becomes `UNREACHABLE`.
 - **LIMITS**: Python source code has not been formally verified in Lean/Coq; reference and optimized implementations remain software oracles, not axioms. Test scope is exact for occupancy<=3 only. CI status must be checked on the new commit before this revision can be marked remotely VERIFIED.
+
+## R7 v1.0 full feature completion ledger
+
+- **R14 (USER/SHOULD)**: Complete four-seat team play, pointed ownership, first-round blanks and mandatory passes: `teams` / `team_bitboard`; fully implemented and independently tested at full opening and seeded playouts. `VERIFIED` under test scope.
+- **R15 (USER/SHOULD)**: Playable opponent with bounded resource control: `engine`; fixed-depth alpha-beta matches independent brute minimax at tested depths; no score fabricated after budget cutoff. `VERIFIED` under test scope.
+- **R16 (USER/SHOULD)**: Reproducible puzzle search with proof-gated output: `generator`, `team_puzzles`, `generic_proof`, `verify_examples`, 4 committed examples spanning two- and four-player rules. Corrupt/invalid puzzles rejected. `VERIFIED`.
+- **R17 (USER/SHOULD)**: Fair baseline for heuristic search: `engine_bench`; no timed comparison without exact score equality. Local `VERIFIED`; external superiority `UNVERIFIED`.
+- **R18 (USER/HARD)**: Preserve end-to-end headless package/CLI while enhancing rules: `cli`, `pyproject`, CI, checksums, README; local `VERIFIED`; remote CI requires revision-specific run.
+
+Scope: full playable rules and core code shipped, **not** a complete mathematically solved infinite-game strategy or unbounded arbitrary-position reachability. See `R7_V1_RELEASE.md` for exact evidence, assumptions and unproved claims.

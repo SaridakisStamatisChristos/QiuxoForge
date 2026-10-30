@@ -51,9 +51,19 @@ def legal_moves(s: State) -> tuple[Move, ...]:
 
 
 def apply(s: State, move: Move) -> State:
-    if not isinstance(move, Move) or move not in legal_moves(s):
+    # Validate geometry and cube ownership independently in O(1) rather
+    # than regenerating the whole legal list for each transition. This is
+    # semantically equivalent to membership in legal_moves(s).
+    if not isinstance(move, Move):
         raise ValueError(f"illegal move: {move!r}")
     r, c = divmod(move.index, 5)
+    if (0 < r < 4 and 0 < c < 4) or s.cells[move.index] not in (0, s.turn) or (
+        (move.edge == "L" and c == 0) or
+        (move.edge == "R" and c == 4) or
+        (move.edge == "U" and r == 0) or
+        (move.edge == "D" and r == 4)
+    ) or winner(s) is not None:
+        raise ValueError(f"illegal move: {move!r}")
     coords: list[tuple[int, int]] = [(r, c)]
     if move.edge == "L":
         coords.extend((r, k) for k in range(c-1, -1, -1))

@@ -50,11 +50,15 @@ class ReachabilityIndex:
         examined_edges = 0
         while queue:
             position = queue.popleft()
+            total = occupancy(position)
             for move in reference.legal_moves(position):
-                # The reference transition is the semantic oracle. A branch
-                # exceeding the occupancy cap cannot return to that cap.
-                child = reference.apply(position, move)
+                # Blank selection creates one new mark. At the cap it cannot
+                # lead back inside the indexed domain, so skip before the
+                # expensive shift. Still count the legal candidate edge.
                 examined_edges += 1
+                if total == max_stones and position.cells[move.index] == 0:
+                    continue
+                child = reference.apply(position, move)
                 if occupancy(child) <= max_stones and child not in parents:
                     parents[child] = (position, move)
                     queue.append(child)

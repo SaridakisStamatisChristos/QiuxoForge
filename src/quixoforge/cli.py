@@ -7,6 +7,11 @@ from .puzzles import Puzzle, audit
 from .solver import ReferenceSolver, BitboardSolver
 from .bench import main as bench_main
 from .reachability import ReachabilityIndex, occupancy
+from .engine import AlphaBetaEngine
+from . import teams, team_bitboard
+from .generator import certify, generate
+from .team_puzzles import certify as team_certify, parse_action
+from .solver import ReferenceSolver, Result
 
 
 def main(argv=None):
@@ -27,6 +32,28 @@ def main(argv=None):
     reach.add_argument("--turn", choices=("X", "O"), default="X")
     reach.add_argument("--start", choices=("X", "O"), default="X")
     reach.add_argument("--max-stones", type=int, default=2)
+    opponent = sub.add_parser("opponent", help="deterministic iterative-deepening alpha-beta recommendation (heuristic)")
+    opponent.add_argument("--depth", type=int, default=3)
+    opponent.add_argument("--max-nodes", type=int, default=100000)
+    opponent.add_argument("history", nargs="*")
+    team = sub.add_parser("team", help="official four-player play/replay and independent bounded team solver")
+    team.add_argument("--depth", type=int, default=0)
+    team.add_argument("history", nargs="*", help="index:edge:point or PASS")
+    tc = sub.add_parser("team-certify", help="fully certify a 4-player team tactical puzzle")
+    tc.add_argument("--depth",type=int,default=1)
+    tc.add_argument("--unique",action="store_true")
+    tc.add_argument("history",nargs="*",help="index:edge:point or PASS")
+    cert = sub.add_parser("certify", help="emit fully checked tactical certificate as JSON")
+    cert.add_argument("--depth", type=int, default=1)
+    cert.add_argument("--unique", action="store_true")
+    cert.add_argument("history", nargs="*")
+    gen = sub.add_parser("generate", help="seeded, exhaustive-proof-gated tactical puzzle generator")
+    gen.add_argument("--seed", type=int, required=True)
+    gen.add_argument("--depth", type=int, default=1)
+    gen.add_argument("--attempts", type=int, default=500)
+    gen.add_argument("--min-plies", type=int, default=8)
+    gen.add_argument("--max-plies", type=int, default=32)
+    gen.add_argument("--allow-multiple", action="store_true")
     sub.add_parser("bench", help="use python -m quixoforge.bench for configured runs")
     args = ap.parse_args(argv)
     if args.command == "bench":
@@ -49,9 +76,48 @@ def main(argv=None):
                           "index_states": index.state_count,
                           "examined_edges": index.examined_edges}))
         return
+    if args.command == "team-certify":
+        try:
+            actions = tuple(parse_action(a) for a in args.history)
+        except ValueError as exc:
+            ap.error(str(exc))
+        print(json.dumps(team_certify(actions, args.depth, unique=args.unique),sort_keys=True))
+        return
+    if args.command == "generate":
+        print(json.dumps(generate(seed=args.seed, bound=args.depth, attempts=args.attempts,
+                                  min_plies=args.min_plies, max_plies=args.max_plies,
+                                  unique=not args.allow_multiple), sort_keys=True))
+        return
+    if args.command == "team":
+        try:
+            history = tuple(parse_action(token) for token in args.history)
+        except ValueError as exc:
+            ap.error(str(exc))
+        state = teams.replay(history)
+        bits = team_bitboard.TeamBits.from_state(state)
+        if args.depth < 0:
+            ap.error("--depth must not be negative")
+        a = ReferenceSolver(teams.FourPlayerGame()).solve(state,args.depth)
+        b = ReferenceSolver(team_bitboard.BitboardFourPlayerGame()).solve(bits,args.depth)
+        if a != b:
+            raise AssertionError("four-player independent solver disagreement")
+        print(json.dumps({"cells": list(state.cells), "seat": state.seat, "ply": state.ply,
+                          "winner": teams.winner(state),
+                          "legal": [str(m) for m in teams.legal_moves(state)],
+                          "bounded_result": a.value, "depth": args.depth}, sort_keys=True))
+        return
     hist = tuple(Move.parse(s) for s in args.history)
     s = replay(hist)
-    if args.command == "show":
+    if args.command == "opponent":
+        outcome = AlphaBetaEngine().recommend(s, depth=args.depth, max_nodes=args.max_nodes)
+        print(json.dumps({"move": str(outcome.move) if outcome.move else None,
+                          "score": outcome.score, "completed_depth": outcome.completed_depth,
+                          "nodes": outcome.nodes, "pv": [str(m) for m in outcome.pv],
+                          "aborted": outcome.aborted,
+                          "claim": "heuristic minimax; not an exact game-theoretic outcome"}, sort_keys=True))
+    elif args.command == "certify":
+        print(json.dumps(certify(hist, args.depth, unique=args.unique), sort_keys=True))
+    elif args.command == "show":
         print(s, f"\nturn={s.turn}, winner={winner(s)}, legal={len(legal_moves(s))}")
     elif args.command == "solve":
         a = ReferenceSolver().solve(s, args.depth)

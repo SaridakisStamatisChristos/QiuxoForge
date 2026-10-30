@@ -1,0 +1,26 @@
+{
+  "depth": 1,
+  "implementations": {
+    "bitboard": {
+      "max_ns": 4203079,
+      "median_ns": 2527561,
+      "median_search_nodes": 24,
+      "min_ns": 892299
+    },
+    "reference": {
+      "max_ns": 830810,
+      "median_ns": 567661,
+      "median_search_nodes": 24,
+      "min_ns": 517821
+    }
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "plies": 6,
+  "python": "3.13.5",
+  "repeats": 1,
+  "requested_count": 3,
+  "samples": 3,
+  "schema": 1,
+  "scope": "local wall-clock exploratory; no cross-platform speed claim",
+  "seed": 711
+}

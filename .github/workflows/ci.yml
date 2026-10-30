@@ -22,5 +22,9 @@ jobs:
         run: python -m pytest -q
       - name: Independently check committed proof certificates
         run: python -m quixoforge.verify_examples
+      - name: Independently check four-player tactical proof
+        run: python -m quixoforge.team_puzzles
+      - name: Independent heuristic minimax benchmark smoke
+        run: python -m quixoforge.engine_bench --seed 917 --count 2 --plies 6 --depth 1 --repeats 1
       - name: Deterministic benchmark smoke (checks equality)
         run: python -m quixoforge.bench --seed 711 --count 3 --plies 6 --depth 1 --repeats 1
