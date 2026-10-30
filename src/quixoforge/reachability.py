@@ -8,7 +8,7 @@ with >K marks. This does NOT decide reachability for targets outside the
 indexed domain; nor does it imply anything about unrestricted optimal play.
 
 This intentionally uses reference rules rather than relying on bitboard solver
-transpositions. The finite bound K<=3 keeps the index tractable in pure Python.
+transpositions. The finite bound K<=4 keeps the index tractable in pure Python.
 """
 from __future__ import annotations
 from collections import deque
@@ -42,8 +42,8 @@ class ReachabilityIndex:
 
     @classmethod
     def build(cls, max_stones: int = 2, *, start: int = X) -> "ReachabilityIndex":
-        if type(max_stones) is not int or not 0 <= max_stones <= 3:
-            raise ValueError("exact reachability index supports occupancy bounds 0..3")
+        if type(max_stones) is not int or not 0 <= max_stones <= 4:
+            raise ValueError("exact reachability index supports occupancy bounds 0..4")
         root = initial(start)
         parents: dict[State, tuple[State, Move] | None] = {root: None}
         queue = deque([root])

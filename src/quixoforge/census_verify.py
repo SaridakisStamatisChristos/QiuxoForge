@@ -144,8 +144,8 @@ def _rotate5(state, k):
 
 
 def verify_5x5_sparse(max_stones: int = 3) -> dict:
-    if type(max_stones) is not int or max_stones not in (0,1,2,3):
-        raise ValueError("max_stones must be 0..3")
+    if type(max_stones) is not int or max_stones not in (0,1,2,3,4):
+        raise ValueError("max_stones must be 0..4")
     reachable = ReachabilityIndex.build(max_stones, start=X)
     states = set(reachable._parents)
     hist = defaultdict(Counter)
@@ -155,7 +155,7 @@ def verify_5x5_sparse(max_stones: int = 3) -> dict:
         occupancy = (25 - state.cells.count(0))
         bs = bitboard.Bits.from_state(state)
         if bitboard.winner(bs) is not None:
-            raise AssertionError("unexpected 5x5 win in occupancy <=3")
+            raise AssertionError("unexpected 5x5 win in occupancy <=4")
         legal = bitboard.legal_moves(bs)
         candidate_edges += len(legal)
         for action in legal:

@@ -4,7 +4,7 @@
 are geometric D4 orbits of (rules, side to move, objective, state).
 No arbitrary color swapping; legal actions (not distinct child boards) count.
 
-The 5x5 computation is a COMPLETE occupancy<=3 reachability-domain census,
+The 5x5 computation is a COMPLETE occupancy<=4 reachability-domain census,
 not a solution of the unrestricted 5x5 game.
 """
 from __future__ import annotations
@@ -201,8 +201,8 @@ def census_3x3(tablebase: Tablebase | None = None) -> dict:
 
 def census_5x5_sparse(max_stones: int = 3) -> dict:
     """Exact reachable structural-domain count, NOT 5x5 winning puzzles."""
-    if type(max_stones) is not int or max_stones not in (0, 1, 2, 3):
-        raise ValueError("verified 5x5 census accepts occupancy cap 0..3")
+    if type(max_stones) is not int or max_stones not in (0, 1, 2, 3, 4):
+        raise ValueError("verified 5x5 census accepts occupancy cap 0..4")
     index = ReachabilityIndex.build(max_stones, start=X)
     groups = defaultdict(list)
     for state in index._parents:

@@ -28,7 +28,7 @@ def main(argv=None):
     puzzle.add_argument("--depth", type=int, default=1)
     puzzle.add_argument("--unique", action="store_true")
     puzzle.add_argument("history", nargs="*")
-    reach = sub.add_parser("reach", help="exact reachability for boards with <=3 marks")
+    reach = sub.add_parser("reach", help="exact reachability for boards with <=4 marks")
     reach.add_argument("--board", required=True,
                        help="25 row-major characters: '.' blank, 'X' or 'O'")
     reach.add_argument("--turn", choices=("X", "O"), default="X")
@@ -97,8 +97,8 @@ def main(argv=None):
     if args.command == "reach":
         if len(args.board) != 25 or any(c not in ".XO" for c in args.board):
             ap.error("--board must contain exactly 25 characters from .XO")
-        if not 0 <= args.max_stones <= 3:
-            ap.error("--max-stones must be in 0..3")
+        if not 0 <= args.max_stones <= 4:
+            ap.error("--max-stones must be in 0..4")
         current = State(tuple({".": 0, "X": X, "O": O}[c] for c in args.board),
                         {"X": X, "O": O}[args.turn])
         if occupancy(current) > args.max_stones:

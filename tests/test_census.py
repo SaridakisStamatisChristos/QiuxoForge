@@ -117,8 +117,21 @@ def test_unique_puzzle_corpus_all_solutions_and_histories_replay():
 
 def test_reject_invalid_domain_or_family():
     with pytest.raises(ValueError, match="occupancy cap"):
-        census_5x5_sparse(4)
+        census_5x5_sparse(5)
     with pytest.raises(ValueError, match="occupancy cap"):
         census_5x5_sparse(-1)
     with pytest.raises(ValueError, match="unsupported objective"):
         records_3x3("undefined")
+
+
+def test_sparse_5x5_four_stone_exact_new_domain():
+    report = verify_5x5_sparse(4)
+    assert report["reachable_states"] == 199461
+    assert report["candidate_transitions_examined"] == 7945716
+    assert report["in_domain_edges"] == 1253304
+    assert report["orbit_count_all"] == 25235
+    assert report["burnside_fixed_sum"] == 201880
+    assert report["by_occupancy"]["4"] == {
+        "states": 187164, "orbits": 23659,
+        "nonterminal_states": 187164, "nonterminal_orbits": 23659,
+    }
