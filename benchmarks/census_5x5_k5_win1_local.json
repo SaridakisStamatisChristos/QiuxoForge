@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "domain": "5x5 X-first terminal-stopped reachable occupancy <=5; objective win in one",
+  "runtime": "CPython 3.13.5 Linux local",
+  "geometric_reachability_method": "D4-quotient BFS with all occupancy-preserving moves",
+  "independent_tactical_oracle": "Pure tuple-array reference transitions/winner on all positive orbit representatives",
+  "position_orbits_all": 283316,
+  "reachable_states": 2254843,
+  "by_occupancy": {
+    "0": {
+      "states": 1,
+      "orbits": 1
+    },
+    "1": {
+      "states": 16,
+      "orbits": 3
+    },
+    "2": {
+      "states": 468,
+      "orbits": 60
+    },
+    "3": {
+      "states": 11812,
+      "orbits": 1512
+    },
+    "4": {
+      "states": 187164,
+      "orbits": 23659
+    },
+    "5": {
+      "states": 2055382,
+      "orbits": 258081
+    }
+  },
+  "orbit_size_hist": {
+    "1": 1,
+    "2": 13,
+    "4": 2900,
+    "8": 280402
+  },
+  "win_in_one": {
+    "raw_states": 936,
+    "orbits": 120
+  },
+  "unique_win_in_one": {
+    "raw_states": 360,
+    "orbits": 46
+  },
+  "winning_action_count_hist": {
+    "1": 46,
+    "2": 4,
+    "3": 30,
+    "4": 10,
+    "5": 14,
+    "7": 8,
+    "8": 8
+  },
+  "all_unique_records_shortest_replayed": 46,
+  "independent_full_five_cube_reachability_reproduction": false,
+  "claim_scope": "local finite-domain computation; not a global 5x5 puzzle count"
+}
