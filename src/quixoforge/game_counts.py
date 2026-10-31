@@ -16,6 +16,7 @@ def game_count_summary() -> dict:
     two-ply cycle followed by a first win is independently replayable.
     """
     total_position_orbits_k8 = 75_434_676
+    total_position_orbits_k9 = 316_462_989
     terminal_position_orbits_k8 = 33_441
     nonterminal_position_orbits_k8 = (
         total_position_orbits_k8 - terminal_position_orbits_k8
@@ -41,12 +42,38 @@ def game_count_summary() -> dict:
                 "winning_length_after_n_cycles": "9 + 2*n for any integer n>=0",
             },
         },
+        "infinite_nonterminating_move_sequences": {
+            "cardinality": "continuum",
+            "cardinality_symbol": "2^(aleph_0)",
+            "exact": True,
+            "model": "infinite legal nonterminal move histories; no repetition termination",
+            "constructive_witness": {
+                "prefix": ["24:U", "3:R", "20:R", "20:R"],
+                "binary_choice_cycles": [
+                    ["3:R", "3:R"],
+                    ["23:R", "23:R"],
+                ],
+                "proof": (
+                    "both 2-ply cycles legally return to the same X-turn "
+                    "nonterminal state; each infinite binary word yields "
+                    "a distinct never-terminal game"
+                ),
+            },
+        },
+        "all_finite_and_infinite_legal_move_sequences": {
+            "cardinality": "continuum",
+            "exact": True,
+            "caveat": "includes infinite nonterminating histories, not only games ending with a winner",
+        },
         "reachable_board_turn_positions": {
             "global_exact": None,
             "global_status": "NOT_COMPUTED",
-            "completely_enumerated_occupancy_at_most": 8,
+            "completely_enumerated_occupancy_at_most": 9,
             "raw_states_k8": 603_033_221,
             "geometric_orbits_k8": total_position_orbits_k8,
+            "raw_states_k9_cumulative": 2_530_588_373,
+            "geometric_orbits_k9_cumulative": total_position_orbits_k9,
+            "raw_terminal_states_k9_cumulative": 2_764_208,
             "nonterminal_orbits_k8": nonterminal_position_orbits_k8,
             "global_nonterminal_orbit_upper_bound": 192_103_543_264,
         },
@@ -54,16 +81,24 @@ def game_count_summary() -> dict:
             "global_exact": None,
             "global_status": "NOT_COMPUTED",
             "win_in_one_orbits_k8": immediate_puzzles,
+            "win_in_one_orbits_k9_exact_layer": 4_736_195,
+            "win_in_one_orbits_k9_cumulative": 5_434_783,
             "additional_forced_win_in_three_orbits_k7": three_ply_extra,
-            "known_distinct_lower_bound": immediate_puzzles + three_ply_extra,
-            "structural_upper_bound": 192_103_543_264,
+            "known_distinct_lower_bound": 5_434_783 + three_ply_extra,
+            "structural_upper_bound": 100_535_249_578,
+            "upper_bound_source": (
+                "Tanaka et al., Quixo Is Solved Table 2, minus exact structural "
+                "terminal X-line boards, Burnside and fixed-both-color ceiling; "
+                "tools/structural_winning_upper.py"
+            ),
+            "unique_win_in_one_orbits_k9_cumulative": 1_942_916,
             "unique_first_action_known_lower_bound": (
-                unique_immediate + unique_three_ply_extra
+                1_942_916 + unique_three_ply_extra
             ),
             "note": (
                 "Certifications are finite-horizon game-theoretic, not human "
                 "difficulty assessments. Higher occupancies and longer "
-                "forcing horizons are not globally enumerated."
+                "forcing horizons are not globally enumerated beyond K9."
             ),
         },
         "human_meaningful_puzzles": {

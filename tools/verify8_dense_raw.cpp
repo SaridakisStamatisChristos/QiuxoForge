@@ -79,7 +79,7 @@ int main(int argc,char**argv){
   int cap=argc>1?std::stoi(argv[1]):8;
   if(cap<0||cap>8)throw std::runtime_error("cap must be between 0 and 8");
   U budget=argc>2?std::stoull(argv[2]):700000000ULL;
-  if(budget<1||budget>125000000ULL)throw std::runtime_error("invalid raw-state budget");
+  if(budget<1||budget>700000000ULL)throw std::runtime_error("invalid raw-state budget");
   init(cap);
   U bits=offsets[cap+1];
   if(bits>0xFFFFFFFFULL)throw std::runtime_error("combinatorial rank exceeds uint32 scope");

@@ -72,7 +72,7 @@ inline int orbsize(S s){
 inline int who(S s){
  bool wx=false,wo=false;
  for(I line:lines){wx|=(s.x&line)==line;wo|=(s.o&line)==line;}
- if(wx&&wo)return s.turn?1:-1; // last mover loses when both lines exist
+ if(wx&&wo)return s.turn?-1:1; // last mover loses when both lines exist
  return wx?1:wo?-1:0;
 }
 inline S apply(S s,const Move& m){
