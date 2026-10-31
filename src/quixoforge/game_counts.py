@@ -56,7 +56,12 @@ def game_count_summary() -> dict:
             "win_in_one_orbits_k8": immediate_puzzles,
             "additional_forced_win_in_three_orbits_k7": three_ply_extra,
             "known_distinct_lower_bound": immediate_puzzles + three_ply_extra,
-            "structural_upper_bound": 192_103_543_264,
+            "structural_upper_bound": 100_535_249_578,
+            "upper_bound_source": (
+                "Tanaka et al., Quixo Is Solved Table 2, minus exact structural "
+                "terminal X-line boards, Burnside and fixed-both-color ceiling; "
+                "tools/structural_winning_upper.py"
+            ),
             "unique_first_action_known_lower_bound": (
                 unique_immediate + unique_three_ply_extra
             ),
