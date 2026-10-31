@@ -166,12 +166,17 @@ quixoforge verify-bank --input puzzles.json
 **How many games exist?** Complete legal first-win move histories are
 **countably infinite** if repeated nonterminal positions are allowed.
 The number of distinct *reachable* game positions is **finite but
-not globally computed**. Through eight occupied cubes, the existing
-research has independently counted **603,033,221** raw reachable
-board-and-turn states, **75,434,676** geometric classes, and
-**698,958** certified distinct forced-win puzzle classes from the
-one- and three-ply families. These are bounded-domain results,
-**not the total number of possible 5×5 puzzles**.
+not globally computed**. The new exhaustive nine-cube dual-color
+census has counted **2,530,588,373** raw reachable board-and-turn
+states and **316,462,989** geometric classes, identifying
+**at least 5,435,153** certified distinct tactical puzzle classes
+from the one- and three-ply families; **1,942,980** have exactly
+one certified winning first action. These are bounded-domain results,
+**not the total number of possible 5×5 puzzles**. The improved
+Tanaka-informed global upper bound for reachable forcing-win D4
+puzzle classes is **100,535,249,578**, still not an exact total.
+See [K9 exact enumeration](docs/EXACT_K9_REACHABLE_CENSUS.md) and
+[proof of improved bound](docs/STRONG_SOLVE_PUZZLE_UPPER_BOUND.md).
 
 See [generator and counting contracts](docs/GENERATOR_AND_GAME_COUNT.md)
 and [full-game cardinality theorems](docs/GLOBAL_5X5_CARDINALITY_THEOREMS.md).
