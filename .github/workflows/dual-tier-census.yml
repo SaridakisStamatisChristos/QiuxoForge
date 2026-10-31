@@ -2,11 +2,18 @@ name: Independent 5x5 dual-color tier census
 on:
   push:
     branches: [research/exact-k9-dual-color-tier-bitsets]
+    paths:
+      - 'tools/census5_dual_tier.cpp'
+      - 'tools/check_dual_tier_census.py'
+      - '.github/workflows/dual-tier-census.yml'
   pull_request:
     paths:
       - 'tools/census5_dual_tier.cpp'
       - 'tools/check_dual_tier_census.py'
       - '.github/workflows/dual-tier-census.yml'
+concurrency:
+  group: quixoforge-dual-tier-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
