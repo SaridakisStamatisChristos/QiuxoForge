@@ -1,0 +1,37 @@
+name: Independent 5x5 dual-color tier census
+on:
+  push:
+    branches: [research/exact-k9-dual-color-tier-bitsets]
+  pull_request:
+    paths:
+      - 'tools/census5_dual_tier.cpp'
+      - 'tools/check_dual_tier_census.py'
+      - '.github/workflows/dual-tier-census.yml'
+permissions:
+  contents: read
+jobs:
+  exact-census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build independent canonical tier-bitset engine
+        run: c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier.cpp -o /tmp/quixoforge-tiers
+      - name: Exact independent small/medium parity through seven cubes
+        run: |
+          /tmp/quixoforge-tiers 7 > /tmp/census5-tier7.jsonl
+          python tools/check_dual_tier_census.py /tmp/census5-tier7.jsonl
+      - name: Extend exact reachability and immediate-tactical census through nine cubes
+        timeout-minutes: 30
+        run: |
+          /tmp/quixoforge-tiers 9 > census5-tier9.jsonl
+          python tools/check_dual_tier_census.py census5-tier9.jsonl
+      - name: Archive independently reproducible exhaustive census evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: quixoforge-exact-dual-color-tier-k9
+          path: census5-tier9.jsonl
+          if-no-files-found: error
