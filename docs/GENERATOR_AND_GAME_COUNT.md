@@ -72,11 +72,12 @@ are enforced on every branch.
 | Ordered legal first-win move histories with repetitions permitted | Exactly **countably infinite** (proved constructive repeatable two-move cycle) |
 | All legally reachable 5×5 board-and-turn states | **Unknown finite global count** |
 | All reachable nonterminal positions up to board symmetry | **Unknown global count**, rigorous upper bound 192,103,543,264 |
-| Currently certified finite-domain tactical puzzle classes | **At least 698,958**: 698,588 win-in-one through eight marked cubes plus 370 new three-ply forced wins through seven marked cubes |
-| Classes with exactly one certified winning first action among those families | **At least 244,021** |
+| Currently certified finite-domain tactical puzzle classes | **At least 5,435,153**: 5,434,783 win-in-one through nine marked cubes plus 370 additional three-ply forced wins through seven marked cubes |
+| Classes with exactly one certified winning first action among those families | **At least 1,942,980** |
+| Reachable nonterminal forcing-win puzzle D4 classes globally | **Unknown exact number**, rigorous upper bound **100,535,249,578** from published strong-solving results and independent combinatorics |
 | Subjectively meaningful human logic puzzles | Not a number until a specific meaning/difficulty criterion is defined |
 
-The raw 603,033,221 number is the **complete occupancy≤8 reachability
+The raw 2,530,588,373 number is the **complete occupancy≤9 reachability
 census**, including finished positions. It is **not** a full-game count,
 a count of complete games, or a number of already-exported puzzle files.
 
