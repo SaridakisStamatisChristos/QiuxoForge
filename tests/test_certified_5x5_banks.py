@@ -94,6 +94,6 @@ def test_game_counts_retain_independent_scopes():
     assert data["complete_winning_move_sequences"]["exact"] is True
     assert data["reachable_board_turn_positions"]["global_exact"] is None
     assert data["reachable_board_turn_positions"]["nonterminal_orbits_k8"] == 75401235
-    assert data["certified_forcing_win_position_puzzles"]["known_distinct_lower_bound"] == 698958
-    assert data["certified_forcing_win_position_puzzles"]["unique_first_action_known_lower_bound"] == 244021
+    assert data["certified_forcing_win_position_puzzles"]["known_distinct_lower_bound"] == 5435153
+    assert data["certified_forcing_win_position_puzzles"]["unique_first_action_known_lower_bound"] == 1942980
     assert data["human_meaningful_puzzles"]["global_exact"] is None
