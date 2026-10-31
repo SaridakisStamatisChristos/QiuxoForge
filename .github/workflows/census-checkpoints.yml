@@ -1,7 +1,7 @@
 name: Quixo exact resumable census checkpoint validation
 on:
   push:
-    branches: [research/out-of-core-durable-checkpoints]
+    branches: [research/out-of-core-durable-checkpoints, research/k12-frontier-cap-extension-and-k11-evidence]
   pull_request:
     paths:
       - 'tools/census5_dual_tier_external.cpp'
@@ -43,6 +43,15 @@ jobs:
           cat first.jsonl second.jsonl final.jsonl > resumed-K6.jsonl
           python tools/check_external_equivalence.py whole-original.jsonl resumed-K6.jsonl
           python tools/check_dual_tier_census.py resumed-K6.jsonl
+      - name: Exhaustively prove cap extension from 6 to 7 against independent K7 reference
+        run: |
+          mkdir -p expansion-checkpoints
+          /tmp/qf-original 7 > baseline-cap7.jsonl
+          /tmp/qf-resume 6 /tmp --checkpoint expansion-checkpoints --checkpoint-at 4 --stop-after 4 > cap6-prefix.jsonl
+          /tmp/qf-resume 7 /tmp --resume expansion-checkpoints/checkpoint-5 > cap7-continuation.jsonl
+          cat cap6-prefix.jsonl cap7-continuation.jsonl > expanded-cap7.jsonl
+          python tools/check_external_equivalence.py baseline-cap7.jsonl expanded-cap7.jsonl
+          python tools/check_dual_tier_census.py expanded-cap7.jsonl
       - name: Detect corrupt or incompatible checkpoint files; never publish false complete census
         run: |
           python - <<'PY'
@@ -77,4 +86,8 @@ jobs:
             final.jsonl
             corruption.err
             mismatch.err
+            baseline-cap7.jsonl
+            cap6-prefix.jsonl
+            cap7-continuation.jsonl
+            expanded-cap7.jsonl
           if-no-files-found: warn
