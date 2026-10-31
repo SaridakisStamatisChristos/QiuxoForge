@@ -19,6 +19,7 @@ KNOWN = [
     (16353436, 2048650, 552, 3674),
     (99693740, 12475164, 15748, 60180),
     (484731202, 60627546, 247248, 634614),
+    (1927555152, 241028313, 2500660, 4736195),
 ]
 
 def check(path: str | Path) -> dict:
@@ -57,6 +58,15 @@ def check(path: str | Path) -> dict:
     if cap >= 8:
         assert sum(r["orbits"] for r in records[:9]) == 75_434_676
         assert sum(r["raw_states"] for r in records[:9]) == 603_033_221
+    if cap >= 9:
+        if sum(r["orbits"] for r in records[:10]) != 316_462_989:
+            raise ValueError("new exact K9 D4 census mismatch")
+        if sum(r["raw_states"] for r in records[:10]) != 2_530_588_373:
+            raise ValueError("new exact K9 raw-state census mismatch")
+        if sum(r["win1_orbits"] for r in records[:10]) != 5_434_783:
+            raise ValueError("new exact K9 winning-root census mismatch")
+    if cap == 9 and final["total_unique_win1_orbits"] != 1_942_916:
+        raise ValueError("new exact unique-win1 K9 total mismatch")
     return final
 
 def main() -> None:
