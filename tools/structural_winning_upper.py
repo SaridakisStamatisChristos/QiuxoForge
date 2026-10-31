@@ -50,9 +50,14 @@ def _fixed_line_cycles(symmetry: int) -> tuple[int, tuple[int, ...]]:
             ids[j] = n
             j = perm[j]
         n += 1
-    masks = tuple(sum(1 << ids[cell] for cell in range(25) if line >> cell & 1)
-                  for line in LINES)
-    return n, masks
+    affected = []
+    for line in LINES:
+        groups = 0
+        for cell in range(25):
+            if line & (1 << cell):
+                groups |= 1 << ids[cell]
+        affected.append(groups)
+    return n, tuple(affected)
 
 def fixed_nonterminal_both_colors(symmetry: int) -> int:
     """Exact D4-fixed nonterminal board count with X and O both present.
