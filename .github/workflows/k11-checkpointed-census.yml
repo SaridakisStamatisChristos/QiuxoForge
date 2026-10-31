@@ -1,0 +1,70 @@
+name: Quixo 5x5 K11 exact out-of-core checkpointed census
+on:
+  push:
+    branches: [research/k11-checkpointed-census-run]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quixo-k11-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  k11-exact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Exact engine and scratch capacity preflight
+        run: |
+          c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier_external.cpp -o /tmp/qf-checkpointed
+          python tools/estimate_tier_scratch.py --cap 12 > scratch-capacity-upper-bound.json
+          df -h /tmp
+          mkdir -p census-checkpoints
+      - name: Exhaustively close K0..K10 and atomically snapshot K11 frontier
+        timeout-minutes: 110
+        run: |
+          /usr/bin/time -v -o k10-resource.txt /tmp/qf-checkpointed 12 /tmp --checkpoint census-checkpoints --checkpoint-at 10 --stop-after 10 > k0-k10-prefix.jsonl
+          python tools/check_k11_checkpointed.py --prefix k0-k10-prefix.jsonl --checkpoint11 census-checkpoints/checkpoint-11
+      - name: Preserve the certified K11 frontier separately from the expensive K11 sweep
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: quixo-K11-checkpoint-frontier
+          path: |
+            census-checkpoints/checkpoint-11/
+            k0-k10-prefix.jsonl
+            k10-resource.txt
+            scratch-capacity-upper-bound.json
+          compression-level: 1
+          if-no-files-found: error
+      - name: Resume K11 exact closure and atomically snapshot complete K12 frontier
+        timeout-minutes: 220
+        run: |
+          /usr/bin/time -v -o k11-resource.txt /tmp/qf-checkpointed 12 /tmp --resume census-checkpoints/checkpoint-11 --checkpoint census-checkpoints --checkpoint-at 11 --stop-after 11 > k11-only.jsonl
+          python tools/check_k11_checkpointed.py --prefix k0-k10-prefix.jsonl --checkpoint11 census-checkpoints/checkpoint-11 --k11 k11-only.jsonl --checkpoint12 census-checkpoints/checkpoint-12 > k11-verification.json
+      - name: Archive completed K11 evidence even if result is a resource failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quixoforge-K11-exact-census-results
+          path: |
+            k0-k10-prefix.jsonl
+            k11-only.jsonl
+            k11-verification.json
+            k10-resource.txt
+            k11-resource.txt
+            scratch-capacity-upper-bound.json
+            census-checkpoints/checkpoint-12/manifest.txt
+          if-no-files-found: warn
+      - name: Persist K12 resume frontier for future tiers
+        if: success()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: quixo-K12-resume-frontier
+          path: census-checkpoints/checkpoint-12/
+          compression-level: 1
+          if-no-files-found: error
