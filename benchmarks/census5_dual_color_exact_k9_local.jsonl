@@ -1,0 +1,11 @@
+{"occupancy":0,"raw_states":1,"orbits":1,"terminal_raw":0,"win1_orbits":0,"elapsed_seconds":0.000107422}
+{"occupancy":1,"raw_states":16,"orbits":3,"terminal_raw":0,"win1_orbits":0,"elapsed_seconds":0.000196727}
+{"occupancy":2,"raw_states":468,"orbits":60,"terminal_raw":0,"win1_orbits":0,"elapsed_seconds":0.000368416}
+{"occupancy":3,"raw_states":11812,"orbits":1512,"terminal_raw":0,"win1_orbits":0,"elapsed_seconds":0.00402875}
+{"occupancy":4,"raw_states":187164,"orbits":23659,"terminal_raw":0,"win1_orbits":0,"elapsed_seconds":0.0636784}
+{"occupancy":5,"raw_states":2055382,"orbits":258081,"terminal_raw":0,"win1_orbits":120,"elapsed_seconds":0.749433}
+{"occupancy":6,"raw_states":16353436,"orbits":2048650,"terminal_raw":552,"win1_orbits":3674,"elapsed_seconds":6.86249}
+{"occupancy":7,"raw_states":99693740,"orbits":12475164,"terminal_raw":15748,"win1_orbits":60180,"elapsed_seconds":44.6882}
+{"occupancy":8,"raw_states":484731202,"orbits":60627546,"terminal_raw":247248,"win1_orbits":634614,"elapsed_seconds":236.783}
+{"occupancy":9,"raw_states":1927555152,"orbits":241028313,"terminal_raw":2500660,"win1_orbits":4736195,"elapsed_seconds":499.072}
+{"cap":9,"total_raw":2530588373,"total_orbits":316462989,"total_terminal_raw":2764208,"total_win1_orbits":5434783,"total_unique_win1_orbits":1942916}
