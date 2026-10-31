@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "domain": "5x5 two-player X-first, exactly-7-mark reachable roots, unrestricted 3-ply tactical continuations",
+  "new_exactly_three_orbits": 370,
+  "new_exactly_three_raw": 2880,
+  "unique_exactly_three_orbits": 64,
+  "unique_exactly_three_raw": 512,
+  "forcing_first_action_hist": {
+    "1": 64,
+    "2": 120,
+    "3": 120,
+    "4": 66
+  },
+  "independent_positive_reference": "pure tuple-array Python, 370 emitted geometric representatives, all first/defense/reply actions checked; D4 uniqueness and orbit sizes independently checked",
+  "native_computation_seconds": 257.993,
+  "native_peak_rss_kb": 379264,
+  "native_replay_seconds": 254.57,
+  "independent_verification_seconds": 5.88,
+  "evidence_state": "FULL_NATIVE_ENUMERATION_AND_INDEPENDENT_ALL_POSITIVE_CERTIFICATES; negative completeness relies on exhaustive native code",
+  "adaptive_reply_orbits": 370,
+  "adaptive_unique_first_action_orbits": 64,
+  "adaptive_first_action_hist": {
+    "1": 64,
+    "2": 120,
+    "3": 120,
+    "4": 66
+  },
+  "adaptive_definition": "Existence of two different defender replies whose sets of winning final legal actions are disjoint; separately reference-checked for every positive representative",
+  "adaptive_independent_reference": "independent_oracle.py pure tuple-array, all 370 complete 3-ply root certificates plus disjoint-reply pairs"
+}

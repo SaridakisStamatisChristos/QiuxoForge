@@ -4,6 +4,9 @@ on:
   pull_request:
 permissions:
   contents: read
+concurrency:
+  group: quixoforge-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -31,6 +34,9 @@ jobs:
       - name: Independently reproduce all 2.25M raw 5x5 reachable states (Python 3.13)
         if: matrix.python-version == '3.13'
         run: python tools/verify_5x5_raw.py --max-stones 5
+      - name: One-command R7 complete 5x5 census and independent evidence gates
+        if: matrix.python-version == '3.13'
+        run: sh tools/run_full_5x5_r7.sh
       - name: Check release manifest SHA256
         run: sha256sum -c SHA256SUMS
       - name: Independently check committed proof certificates

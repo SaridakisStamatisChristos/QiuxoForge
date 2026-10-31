@@ -63,6 +63,8 @@ def main(argv=None):
     census5.add_argument("--max-stones", type=int, default=5)
     census5.add_argument("--family", choices=("win_in_one", "unique_win_in_one"))
     census5.add_argument("--verify", action="store_true")
+    depth3 = sub.add_parser("census5-depth3", help="exact 5x5 forced win by 3 for reachable K<=5 roots")
+    depth3.add_argument("--verify", action="store_true")
     census = sub.add_parser("census", help="exact D4 puzzle census; 3x3 full or 5x5 sparse")
     census.add_argument("--size", type=int, choices=(3, 5), default=3)
     census.add_argument("--max-stones", type=int, default=3)
@@ -71,6 +73,10 @@ def main(argv=None):
     census.add_argument("--verify", action="store_true")
     sub.add_parser("bench", help="use python -m quixoforge.bench for configured runs")
     args = ap.parse_args(argv)
+    if args.command == "census5-depth3":
+        from .census5_forced3 import main as depth3_main
+        depth3_main(["--verify"] if args.verify else [])
+        return
     if args.command == "census5":
         from .census5_tactical import main as census5_main
         argv = ["--max-stones", str(args.max_stones)]

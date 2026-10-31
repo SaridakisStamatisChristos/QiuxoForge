@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "cap": 8,
+  "occupancies": [
+    {
+      "k": 0,
+      "reachable_states": 1,
+      "d4_orbits": 1,
+      "terminal_states": 0,
+      "terminal_orbits": 0,
+      "win_in_one_states": 0,
+      "win_in_one_orbits": 0,
+      "unique_win_in_one_states": 0,
+      "unique_win_in_one_orbits": 0
+    },
+    {
+      "k": 1,
+      "reachable_states": 16,
+      "d4_orbits": 3,
+      "terminal_states": 0,
+      "terminal_orbits": 0,
+      "win_in_one_states": 0,
+      "win_in_one_orbits": 0,
+      "unique_win_in_one_states": 0,
+      "unique_win_in_one_orbits": 0
+    },
+    {
+      "k": 2,
+      "reachable_states": 468,
+      "d4_orbits": 60,
+      "terminal_states": 0,
+      "terminal_orbits": 0,
+      "win_in_one_states": 0,
+      "win_in_one_orbits": 0,
+      "unique_win_in_one_states": 0,
+      "unique_win_in_one_orbits": 0
+    },
+    {
+      "k": 3,
+      "reachable_states": 11812,
+      "d4_orbits": 1512,
+      "terminal_states": 0,
+      "terminal_orbits": 0,
+      "win_in_one_states": 0,
+      "win_in_one_orbits": 0,
+      "unique_win_in_one_states": 0,
+      "unique_win_in_one_orbits": 0
+    },
+    {
+      "k": 4,
+      "reachable_states": 187164,
+      "d4_orbits": 23659,
+      "terminal_states": 0,
+      "terminal_orbits": 0,
+      "win_in_one_states": 0,
+      "win_in_one_orbits": 0,
+      "unique_win_in_one_states": 0,
+      "unique_win_in_one_orbits": 0
+    },
+    {
+      "k": 5,
+      "reachable_states": 2055382,
+      "d4_orbits": 258081,
+      "terminal_states": 0,
+      "terminal_orbits": 0,
+      "win_in_one_states": 936,
+      "win_in_one_orbits": 120,
+      "unique_win_in_one_states": 360,
+      "unique_win_in_one_orbits": 46
+    },
+    {
+      "k": 6,
+      "reachable_states": 16353436,
+      "d4_orbits": 2048650,
+      "terminal_states": 552,
+      "terminal_orbits": 80,
+      "win_in_one_states": 29140,
+      "win_in_one_orbits": 3674,
+      "unique_win_in_one_states": 9508,
+      "unique_win_in_one_orbits": 1202
+    },
+    {
+      "k": 7,
+      "reachable_states": 99693740,
+      "d4_orbits": 12475164,
+      "terminal_states": 15748,
+      "terminal_orbits": 2070,
+      "win_in_one_states": 480424,
+      "win_in_one_orbits": 60180,
+      "unique_win_in_one_states": 161920,
+      "unique_win_in_one_orbits": 20283
+    },
+    {
+      "k": 8,
+      "reachable_states": 484731202,
+      "d4_orbits": 60627546,
+      "terminal_states": 247248,
+      "terminal_orbits": 31291,
+      "win_in_one_states": 5071268,
+      "win_in_one_orbits": 634614,
+      "unique_win_in_one_states": 1777204,
+      "unique_win_in_one_orbits": 222426
+    }
+  ],
+  "reachable_states": 603033221,
+  "d4_orbits": 75434676,
+  "terminal_states": 263548,
+  "terminal_orbits": 33441,
+  "win_in_one_states": 5581768,
+  "win_in_one_orbits": 698588,
+  "unique_win_in_one_states": 1948992,
+  "unique_win_in_one_orbits": 243957,
+  "candidate_edges_repr": 2779496257,
+  "retained_edges_repr": 988048999,
+  "orbit_sizes": {
+    "1": 7,
+    "2": 297,
+    "4": 110589,
+    "8": 75323783
+  },
+  "seconds": 247.984,
+  "peak_rss_kb": 1639552,
+  "environment": "Linux g++ C++17 -O3, standalone native eight-cube D4 quotient BFS",
+  "evidence_status": "LOCAL_EXECUTED, independent eight-cube raw audit pending"
+}

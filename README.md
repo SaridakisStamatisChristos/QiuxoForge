@@ -116,3 +116,31 @@ quixoforge census5 --max-stones 5 --family unique_win_in_one
 ```
 
 See [the 5x5 tactical census](docs/CENSUS_5X5_TACTICS.md) for definitions, methods, evidence, and remaining validation gates.
+
+## Large-scale 5x5 puzzle census (native R7 v1.4)
+
+The native full-board 5×5 D4-quotient enumerator has now completely traversed **603,033,221 legally reachable board/turn states with ≤8 marks** in **75,434,676 geometric classes**, including **698,588 win-in-one puzzle classes** and **243,957 classes with exactly one immediately winning legal action**. Those counts are finite-domain computations, **not** a global count of all meaningful puzzles. An independently coded, unsymmetrized C++ tuple-array BFS confirms all **18,608,279 states with ≤6 marks**, including the 552 terminal states in occupancy six. An independent raw tuple-array BFS has fully reconstructed **all 118,302,019 states through seven cubes** and independently checked the 510,500 / 171,788 winning/unique raw-action totals. The eight-cube figures have also been independently reproduced by a second raw tuple-array BFS over **603,033,221** distinct states, checking all immediate-winning actions, including negative cases and cap-crossing winning moves.
+
+**One-command full verification** (C++17, Python 3.10+ and POSIX shell):
+
+~~~sh
+sh tools/run_full_5x5_r7.sh
+~~~
+
+Or run the tools separately:
+
+~~~sh
+c++ -O3 -std=c++17 tools/census5_native.cpp -o /tmp/qf-census5
+c++ -O3 -std=c++17 tools/verify5_native_raw.cpp -o /tmp/qf-raw5
+/tmp/qf-census5 8 100000000
+/tmp/qf-raw5 6
+python -m quixoforge.census5_forced3 --verify
+~~~
+
+See [formal results, claims and reproduction gates](docs/CENSUS_5X5_R7_V14.md). The previous Python `census5` command remains valid for the original five-cube witness-export domain; the native executable is for large-scale reproducible counting.
+
+An independent attacker/defender/attacker census over all ≤7-mark roots has also certified **370 new forced-win-in-exactly-three puzzle classes**, of which **64** have exactly one forcing first action. All 370 positive complete-branch certificates passed a separate pure tuple-array verifier. Moreover, every one of the 370 is defender-contingent: at least two legal defender replies require disjoint sets of winning final moves. The all-negative census relies on the exhaustive native search.
+
+Existing Quixo tiering and strong-solving research predates this project (Tanaka et al., *Quixo Is Solved*, 2020; Robert Shi, Berkeley UCB/EECS-2024-139, 2024, Chapter 7.2). The novelty claim is limited to our particular *reachable tactical puzzle census and independently reproduced counts*; the two-color tier partition is **prior art**, not an invention of QuixoForge.
+
+The exact structural D4 generating function for all 25 occupancy layers is implemented in `tools/structural_orbit_bounds.py`. A proved two-color monotone recurrence that partitions the graph by X/O mark counts is documented at [Two-color layer saturation](docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md). Neither is a claim that the full global puzzle count has been computed.
