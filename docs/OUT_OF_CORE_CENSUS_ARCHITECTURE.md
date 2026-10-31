@@ -73,6 +73,15 @@ argument must already exist and be writable.
     /usr/bin/time -v /tmp/quixo-ooc 7 /tmp > k7.jsonl
     python tools/check_dual_tier_census.py k7.jsonl
 
+Use the exact structural scratch estimator before large runs:
+
+    python tools/estimate_tier_scratch.py --cap 11
+
+This reports worst-case file reservations, not typical physical memory,
+reachable-state counts, or a performance prediction. A successful
+preflight does not guarantee the disk will remain sufficient if
+other workloads consume space.
+
 The dedicated out-of-core GitHub workflow independently runs the
 unchanged original and new implementation at K7 and K8 on the same
 runner, compares all occupancy and aggregate counts exactly, and
