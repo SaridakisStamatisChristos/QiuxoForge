@@ -97,6 +97,19 @@ def test_game_counts_retain_independent_scopes():
     assert data["all_finite_and_infinite_legal_move_sequences"]["cardinality"] == "continuum"
     assert data["reachable_board_turn_positions"]["global_exact"] is None
     assert data["reachable_board_turn_positions"]["nonterminal_orbits_k8"] == 75401235
-    assert data["certified_forcing_win_position_puzzles"]["known_distinct_lower_bound"] == 5435153
-    assert data["certified_forcing_win_position_puzzles"]["unique_first_action_known_lower_bound"] == 1942980
+    assert data["certified_forcing_win_position_puzzles"]["known_distinct_lower_bound"] == 147114043
+    assert data["certified_forcing_win_position_puzzles"]["unique_first_action_known_lower_bound"] == 52994688
     assert data["human_meaningful_puzzles"]["global_exact"] is None
+
+def test_k11_report_scoped_as_one_engine_not_complete_global_census():
+    report = game_count_summary()
+    states = report["reachable_board_turn_positions"]
+    puzzles = report["certified_forcing_win_position_puzzles"]
+    assert states["completely_enumerated_occupancy_at_most"] == 11
+    assert states["raw_states_k11_cumulative"] == 26_651_307_485
+    assert states["geometric_orbits_k11_cumulative"] == 3_332_049_627
+    assert puzzles["win_in_one_orbits_k11_cumulative"] == 147_113_673
+    assert puzzles["unique_win_in_one_orbits_k11_cumulative"] == 52_994_624
+    assert "single_engine" in states["k11_verification_status"]
+    assert states["global_exact"] is None
+    assert puzzles["global_exact"] is None

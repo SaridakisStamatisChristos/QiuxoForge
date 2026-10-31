@@ -17,6 +17,8 @@ def game_count_summary() -> dict:
     """
     total_position_orbits_k8 = 75_434_676
     total_position_orbits_k9 = 316_462_989
+    total_position_orbits_k10 = 1_113_552_661
+    total_position_orbits_k11 = 3_332_049_627
     terminal_position_orbits_k8 = 33_441
     nonterminal_position_orbits_k8 = (
         total_position_orbits_k8 - terminal_position_orbits_k8
@@ -68,11 +70,20 @@ def game_count_summary() -> dict:
         "reachable_board_turn_positions": {
             "global_exact": None,
             "global_status": "NOT_COMPUTED",
-            "completely_enumerated_occupancy_at_most": 9,
+            "completely_enumerated_occupancy_at_most": 11,
+            "independently_reproduced_through_occupancy": 8,
+            "k11_verification_status": "single_engine_checkpointed_not_independently_replicated",
             "raw_states_k8": 603_033_221,
             "geometric_orbits_k8": total_position_orbits_k8,
             "raw_states_k9_cumulative": 2_530_588_373,
             "geometric_orbits_k9_cumulative": total_position_orbits_k9,
+            "raw_states_k10_cumulative": 8_905_915_009,
+            "geometric_orbits_k10_cumulative": total_position_orbits_k10,
+            "raw_states_k11_exact_layer": 17_745_392_476,
+            "geometric_orbits_k11_exact_layer": 2_218_496_966,
+            "raw_states_k11_cumulative": 26_651_307_485,
+            "geometric_orbits_k11_cumulative": total_position_orbits_k11,
+            "raw_terminal_states_k11_cumulative": 117_842_292,
             "raw_terminal_states_k9_cumulative": 2_764_208,
             "nonterminal_orbits_k8": nonterminal_position_orbits_k8,
             "global_nonterminal_orbit_upper_bound": 192_103_543_264,
@@ -84,7 +95,10 @@ def game_count_summary() -> dict:
             "win_in_one_orbits_k9_exact_layer": 4_736_195,
             "win_in_one_orbits_k9_cumulative": 5_434_783,
             "additional_forced_win_in_three_orbits_k7": three_ply_extra,
-            "known_distinct_lower_bound": 5_434_783 + three_ply_extra,
+            "win_in_one_orbits_k10_cumulative": 31_939_126,
+            "win_in_one_orbits_k11_exact_layer": 115_174_547,
+            "win_in_one_orbits_k11_cumulative": 147_113_673,
+            "known_distinct_lower_bound": 147_113_673 + three_ply_extra,
             "structural_upper_bound": 100_535_249_578,
             "upper_bound_source": (
                 "Tanaka et al., Quixo Is Solved Table 2, minus exact structural "
@@ -92,13 +106,16 @@ def game_count_summary() -> dict:
                 "tools/structural_winning_upper.py"
             ),
             "unique_win_in_one_orbits_k9_cumulative": 1_942_916,
+            "unique_win_in_one_orbits_k10_cumulative": 11_527_844,
+            "unique_win_in_one_orbits_k11_cumulative": 52_994_624,
+            "k11_verification_status": "single_engine_checkpointed_not_independently_replicated",
             "unique_first_action_known_lower_bound": (
-                1_942_916 + unique_three_ply_extra
+                52_994_624 + unique_three_ply_extra
             ),
             "note": (
                 "Certifications are finite-horizon game-theoretic, not human "
                 "difficulty assessments. Higher occupancies and longer "
-                "forcing horizons are not globally enumerated beyond K9."
+                "forcing horizons are not globally enumerated beyond K11. K11 has a single exact engine plus checkpoint consistency checks, not an independent second enumeration."
             ),
         },
         "human_meaningful_puzzles": {
@@ -109,6 +126,7 @@ def game_count_summary() -> dict:
             "witness_test": "tests/test_winning_histories_infinite.py",
             "local_orbits_and_proofs": "docs/GLOBAL_5X5_CARDINALITY_THEOREMS.md",
             "finite_census": "docs/CENSUS_5X5_R7_V14.md",
+            "k11_checkpointed_census": "docs/EXACT_K11_CHECKPOINTED_CENSUS.md",
         },
     }
 

@@ -67,6 +67,8 @@ inline void save(const string &parent,int last_k,int target_cap,const Progress& 
  sync_dir(root);
  cerr<<"CHECKPOINT_COMPLETE "<<final.string()<<" next_occupancy="<<next<<"\n";
 }
+// Checkpoints are saved only after k<cap, preserving ALL k+1 successors.
+// Therefore a cap may increase safely (never decrease) upon resume.
 inline int load(const string &name,int requested_cap,Progress& progress){
  fs::path dir(name);
  if(!fs::is_directory(dir))throw runtime_error("resume checkpoint directory does not exist");
@@ -75,8 +77,8 @@ inline int load(const string &name,int requested_cap,Progress& progress){
  string magic;int size=0,stored_cap=0,next=0;
  if(!(in>>magic>>size>>stored_cap>>next>>progress.raw>>progress.orbits
        >>progress.terminal>>progress.win1>>progress.unique)
-    ||magic!="QFCKPT1"||size!=5||stored_cap!=requested_cap
-    ||next<1||next>requested_cap)
+    ||magic!="QFCKPT1"||size!=5||stored_cap<1||stored_cap>25
+    ||requested_cap<stored_cap||next<1||next>stored_cap||next>requested_cap)
   throw runtime_error("checkpoint schema/cap mismatch or truncated header");
  for(int x=0;x<=next;x++){
   int fx=-1,fo=-1;U bytes=0,hash=0;
