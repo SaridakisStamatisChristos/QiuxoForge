@@ -81,7 +81,7 @@ inline int orbit(S s){
 inline int winner(S s){
  bool x=false,o=false;
  for(I mask:lines){x|=(s.x&mask)==mask;o|=(s.o&mask)==mask;}
- if(x&&o)return s.turn?-1:1; // previous mover wins if both exist
+ if(x&&o)return s.turn?-1:1; // mover who created both lines loses; side to move wins
  return x?1:o?-1:0;
 }
 inline S apply(S s,const M&m){
