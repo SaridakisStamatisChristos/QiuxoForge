@@ -1,0 +1,80 @@
+name: Quixo exact resumable census checkpoint validation
+on:
+  push:
+    branches: [research/out-of-core-durable-checkpoints]
+  pull_request:
+    paths:
+      - 'tools/census5_dual_tier_external.cpp'
+      - 'tools/quixo_checkpoint.hpp'
+      - 'tools/check_external_equivalence.py'
+      - '.github/workflows/census-checkpoints.yml'
+permissions:
+  contents: read
+concurrency:
+  group: quixo-checkpoint-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  checkpoint-differential:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build untouched reference and new resumable out-of-core engine
+        run: |
+          c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier.cpp -o /tmp/qf-original
+          c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier_external.cpp -o /tmp/qf-resume
+      - name: Verify uncheckpointed behavior matches exact independent reference
+        run: |
+          /tmp/qf-original 6 > whole-original.jsonl
+          /tmp/qf-resume 6 /tmp > whole-optimized.jsonl
+          python tools/check_external_equivalence.py whole-original.jsonl whole-optimized.jsonl
+          python tools/check_dual_tier_census.py whole-optimized.jsonl
+      - name: Verify multiple stop/resume barriers and exact K6 closure
+        run: |
+          mkdir -p checkpoints
+          /tmp/qf-resume 6 /tmp --checkpoint checkpoints --checkpoint-at 3 --stop-after 3 > first.jsonl
+          test -f checkpoints/checkpoint-4/manifest.txt
+          /tmp/qf-resume 6 /tmp --resume checkpoints/checkpoint-4 --checkpoint checkpoints --checkpoint-at 4 --stop-after 4 > second.jsonl
+          test -f checkpoints/checkpoint-5/manifest.txt
+          /tmp/qf-resume 6 /tmp --resume checkpoints/checkpoint-5 > final.jsonl
+          cat first.jsonl second.jsonl final.jsonl > resumed-K6.jsonl
+          python tools/check_external_equivalence.py whole-original.jsonl resumed-K6.jsonl
+          python tools/check_dual_tier_census.py resumed-K6.jsonl
+      - name: Detect corrupt or incompatible checkpoint files; never publish false complete census
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path("checkpoints/checkpoint-5")
+          f=next(p.glob("tier-*.bin"))
+          data=f.read_bytes()
+          f.write_bytes(bytes([data[0] ^ 0x80])+data[1:])
+          PY
+          if /tmp/qf-resume 6 /tmp --resume checkpoints/checkpoint-5 > should-fail.jsonl 2> corruption.err; then
+            echo "CORRUPT CHECKPOINT PASSED" >&2; exit 1
+          fi
+          grep -q "checkpoint bitmap checksum mismatch" corruption.err
+          if grep -q '"total_raw"' should-fail.jsonl; then
+            echo "CORRUPT CHECKPOINT PUBLISHED A COMPLETE COUNT" >&2; exit 1
+          fi
+          if /tmp/qf-resume 5 /tmp --resume checkpoints/checkpoint-4 > mismatch.jsonl 2> mismatch.err; then
+            echo "CAP MISMATCH PASSED" >&2; exit 1
+          fi
+          grep -q "checkpoint schema/cap mismatch" mismatch.err
+      - name: Preserve independently reproducible checkpoint evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quixoforge-atomic-restart-checkpoint-K6
+          path: |
+            whole-original.jsonl
+            whole-optimized.jsonl
+            resumed-K6.jsonl
+            first.jsonl
+            second.jsonl
+            final.jsonl
+            corruption.err
+            mismatch.err
+          if-no-files-found: warn

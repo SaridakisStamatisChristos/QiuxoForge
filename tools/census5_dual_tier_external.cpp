@@ -227,18 +227,44 @@ inline bool mark(S s,int x,int o){
  if(word&mask)return false;
  word|=mask;return true;
 }
+#include "quixo_checkpoint.hpp"
+
 int main(int argc,char**argv){
  try{
   cap=argc>1?stoi(argv[1]):7;
-  if(cap<0||cap>25||argc>3)throw runtime_error("usage: census5_dual_tier_external [cap 0..25] [existing scratch directory]");
+  if(cap<0||cap>25)throw runtime_error("cap must be 0..25");
   scratch_dir=argc>2?argv[2]:(getenv("TMPDIR")?getenv("TMPDIR"):"/tmp");
+  string checkpoint_root,resume_dir;
+  int checkpoint_at=-1,stop_after=-1;
+  for(int i=3;i<argc;i++){
+   string opt=argv[i];
+   if(opt=="--checkpoint"&&i+1<argc)checkpoint_root=argv[++i];
+   else if(opt=="--checkpoint-at"&&i+1<argc)checkpoint_at=stoi(argv[++i]);
+   else if(opt=="--stop-after"&&i+1<argc)stop_after=stoi(argv[++i]);
+   else if(opt=="--resume"&&i+1<argc)resume_dir=argv[++i];
+   else throw runtime_error("invalid checkpoint option: "+opt);
+  }
+  if(checkpoint_at==-1&&!checkpoint_root.empty())checkpoint_at=cap-1;
+  if((checkpoint_at>=0&&checkpoint_root.empty())||
+     (!checkpoint_root.empty()&&(checkpoint_at<0||checkpoint_at>=cap))||
+     (stop_after>=0&&(stop_after!=checkpoint_at||checkpoint_root.empty())))
+   throw runtime_error("checkpoint-at must be 0..cap-1 and stop-after must equal checkpoint-at");
   struct stat st{};
   if(stat(scratch_dir.c_str(),&st)!=0||!S_ISDIR(st.st_mode)||access(scratch_dir.c_str(),W_OK|X_OK)!=0)
    throw runtime_error("scratch directory must exist and be writable");
-  setup();mark(S{},0,0);
+  setup();
   U allRaw=0,allOrbits=0,allTerminal=0,allWin1=0,allUnique=0;
+  int start_k=0;
+  if(!resume_dir.empty()){
+   qcheckpoint::Progress progress;
+   start_k=qcheckpoint::load(resume_dir,cap,progress);
+   allRaw=progress.raw;allOrbits=progress.orbits;
+   allTerminal=progress.terminal;allWin1=progress.win1;allUnique=progress.unique;
+   if(checkpoint_at>=0&&checkpoint_at<start_k)
+    throw runtime_error("checkpoint-at must follow resumed tier");
+  }else mark(S{},0,0);
   auto start=chrono::steady_clock::now();
-  for(int k=0;k<=cap;k++){
+  for(int k=start_k;k<=cap;k++){
    U levelRaw=0,levelOrbits=0,levelTerminal=0,levelWin1=0;
    for(int x=0;x<=k;x++){
     int o=k-x;Tier&t=ensure_tier(x,o);DiskQueue queue;
@@ -275,6 +301,11 @@ int main(int argc,char**argv){
    cout<<"{\"occupancy\":"<<k<<",\"raw_states\":"<<levelRaw<<",\"orbits\":"
        <<levelOrbits<<",\"terminal_raw\":"<<levelTerminal
        <<",\"win1_orbits\":"<<levelWin1<<",\"elapsed_seconds\":"<<sec<<"}"<<endl;
+   if(k==checkpoint_at){
+    qcheckpoint::Progress progress{allRaw,allOrbits,allTerminal,allWin1,allUnique};
+    qcheckpoint::save(checkpoint_root,k,cap,progress);
+    if(stop_after==k)return 0; // No completed-census footer on a partial run.
+   }
   }
   cout<<"{\"cap\":"<<cap<<",\"total_raw\":"<<allRaw
       <<",\"total_orbits\":"<<allOrbits
