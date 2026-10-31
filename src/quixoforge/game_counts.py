@@ -42,6 +42,29 @@ def game_count_summary() -> dict:
                 "winning_length_after_n_cycles": "9 + 2*n for any integer n>=0",
             },
         },
+        "infinite_nonterminating_move_sequences": {
+            "cardinality": "continuum",
+            "cardinality_symbol": "2^(aleph_0)",
+            "exact": True,
+            "model": "infinite legal nonterminal move histories; no repetition termination",
+            "constructive_witness": {
+                "prefix": ["24:U", "3:R", "20:R", "20:R"],
+                "binary_choice_cycles": [
+                    ["3:R", "3:R"],
+                    ["23:R", "23:R"],
+                ],
+                "proof": (
+                    "both 2-ply cycles legally return to the same X-turn "
+                    "nonterminal state; each infinite binary word yields "
+                    "a distinct never-terminal game"
+                ),
+            },
+        },
+        "all_finite_and_infinite_legal_move_sequences": {
+            "cardinality": "continuum",
+            "exact": True,
+            "caveat": "includes infinite nonterminating histories, not only games ending with a winner",
+        },
         "reachable_board_turn_positions": {
             "global_exact": None,
             "global_status": "NOT_COMPUTED",
