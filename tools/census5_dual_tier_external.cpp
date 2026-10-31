@@ -254,10 +254,10 @@ int main(int argc,char**argv){
      if(pop(s.x)!=x||pop(s.o)!=o)throw runtime_error("wrong tier");
      int weight=orbit(s);levelRaw+=weight;levelOrbits++;
      if(winner(s)){levelTerminal+=weight;continue;}
-     int actor=s.turn?-1:1,wins=0;I enemy=s.turn?s.x:s.o;
+     int actor=s.turn?-1:1,wins=0;I enemy=s.turn?s.x:s.o;bool canwin=pop(s.turn?s.o:s.x)>=4;
      for(const M&m:moves){
       I bit=1u<<m.cell;if(enemy&bit)continue;
-      S next=apply(s,m);if(pop(s.turn?s.o:s.x)>=4&&winner(next)==actor)wins++;
+      S next=apply(s,m);if(canwin&&winner(next)==actor)wins++;
       bool increase=!(bit&(s.x|s.o));
       if(k==cap&&increase)continue;
       S key=canon(next);int nx=x+(!s.turn&&increase),no=o+(s.turn&&increase);
