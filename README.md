@@ -144,3 +144,39 @@ An independent attacker/defender/attacker census over all ≤7-mark roots has al
 Existing Quixo tiering and strong-solving research predates this project (Tanaka et al., *Quixo Is Solved*, 2020; Robert Shi, Berkeley UCB/EECS-2024-139, 2024, Chapter 7.2). The novelty claim is limited to our particular *reachable tactical puzzle census and independently reproduced counts*; the two-color tier partition is **prior art**, not an invention of QuixoForge.
 
 The exact structural D4 generating function for all 25 occupancy layers is implemented in `tools/structural_orbit_bounds.py`. A proved two-color monotone recurrence that partitions the graph by X/O mark counts is documented at [Two-color layer saturation](docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md). Neither is a claim that the full global puzzle count has been computed.
+
+
+## Certified 5×5 puzzle-bank generator and full-game count semantics
+
+QuixoForge supports creating **guaranteed playable** X-first 5×5
+tactical puzzle banks. Every exported puzzle has a legal move history,
+two independent bounded solver checks, a full defender-coverage proof,
+and a D4 symmetry identifier. Duplicates are rejected, and any search
+that cannot fill the requested bank fails rather than returning an
+incomplete catalogue.
+
+```bash
+pip install -e '.[test]'
+quixoforge count-5x5
+quixoforge generate-bank --count 2 --seed 42 --depth 1 --allow-multiple \
+    --searches 500 --attempts-per-search 100 --output puzzles.json
+quixoforge verify-bank --input puzzles.json
+```
+
+**How many games exist?** Complete legal first-win move histories are
+**countably infinite** if repeated nonterminal positions are allowed.
+The number of distinct *reachable* game positions is **finite but
+not globally computed**. The new exhaustive nine-cube dual-color
+census has counted **2,530,588,373** raw reachable board-and-turn
+states and **316,462,989** geometric classes, identifying
+**at least 5,435,153** certified distinct tactical puzzle classes
+from the one- and three-ply families; **1,942,980** have exactly
+one certified winning first action. These are bounded-domain results,
+**not the total number of possible 5×5 puzzles**. The improved
+Tanaka-informed global upper bound for reachable forcing-win D4
+puzzle classes is **100,535,249,578**, still not an exact total.
+See [K9 exact enumeration](docs/EXACT_K9_REACHABLE_CENSUS.md) and
+[proof of improved bound](docs/STRONG_SOLVE_PUZZLE_UPPER_BOUND.md).
+
+See [generator and counting contracts](docs/GENERATOR_AND_GAME_COUNT.md)
+and [full-game cardinality theorems](docs/GLOBAL_5X5_CARDINALITY_THEOREMS.md).
