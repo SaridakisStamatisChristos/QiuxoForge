@@ -1,0 +1,49 @@
+name: Certified puzzle generator and count contracts
+on:
+  push:
+    branches:
+      - feature/certified-5x5-generator-and-game-count
+  pull_request:
+    paths:
+      - 'src/quixoforge/catalog.py'
+      - 'src/quixoforge/game_counts.py'
+      - 'src/quixoforge/cli.py'
+      - 'tests/test_certified_5x5_banks.py'
+      - 'tests/test_winning_histories_infinite.py'
+      - '.github/workflows/generator-count.yml'
+permissions:
+  contents: read
+jobs:
+  generator-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e '.[test]'
+      - name: Independent generator/bank/history contracts
+        run: python -m pytest -q tests/test_certified_5x5_banks.py tests/test_winning_histories_infinite.py
+      - name: End-to-end seeded puzzle generation and independent bank replay
+        timeout-minutes: 5
+        run: |
+          quixoforge generate-bank --count 1 --seed 42 --depth 1 --allow-multiple --searches 50 --attempts-per-search 120 --output sample-puzzle-bank.json
+          quixoforge verify-bank --input sample-puzzle-bank.json
+      - name: Explicit count query
+        run: |
+          quixoforge count-5x5 > counts.json
+          python -c "import json; d=json.load(open('counts.json')); assert d['complete_winning_move_sequences']['cardinality']=='countably_infinite'; assert d['reachable_board_turn_positions']['global_exact'] is None"
+
+      - name: Export example certified puzzle and count JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: certified-5x5-example-${{ matrix.python-version }}
+          path: |
+            sample-puzzle-bank.json
+            counts.json
+          if-no-files-found: error
