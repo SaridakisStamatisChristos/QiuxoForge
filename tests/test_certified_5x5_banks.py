@@ -92,6 +92,9 @@ def test_game_counts_retain_independent_scopes():
     data = game_count_summary()
     assert data["complete_winning_move_sequences"]["cardinality"] == "countably_infinite"
     assert data["complete_winning_move_sequences"]["exact"] is True
+    assert data["infinite_nonterminating_move_sequences"]["cardinality"] == "continuum"
+    assert data["infinite_nonterminating_move_sequences"]["exact"] is True
+    assert data["all_finite_and_infinite_legal_move_sequences"]["cardinality"] == "continuum"
     assert data["reachable_board_turn_positions"]["global_exact"] is None
     assert data["reachable_board_turn_positions"]["nonterminal_orbits_k8"] == 75401235
     assert data["certified_forcing_win_position_puzzles"]["known_distinct_lower_bound"] == 5435153
