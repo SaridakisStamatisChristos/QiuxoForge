@@ -79,13 +79,18 @@ for standard X-first 5x5 Quixo, under D4 geometry (no color swap).
 ## Certified tactical lower bound
 
 Independent finite-domain reachability and tactical evaluation through
-eight occupied cubes identify 698,588 geometric win-in-one classes. A
-separate exact three-ply AND/OR search identifies 370 more disjoint
+nine occupied cubes identify **5,434,783** geometric win-in-one classes
+(see EXACT_K9_REACHABLE_CENSUS.md; local and GitHub executions agree).
+A separate three-ply AND/OR search identifies 370 more disjoint
 geometric forcing-win-by-three classes among roots with <=7 cubes.
-Thus for the explicit property "legally reachable nonterminal positions
-from which the player to move can force a terminal victory in finite time":
+Combining this new lower bound with the tighter bound from the published
+full-board WIN/LOSS/DRAW totals (see
+STRONG_SOLVE_PUZZLE_UPPER_BOUND.md) yields:
 
-    698,958 <= FORCING-WIN POSITION D4 CLASSES <= 192,103,543,264
+    5,435,153 <= FORCING-WIN POSITION D4 CLASSES <= 100,535,249,578
+
+The larger 192,103,543,264 figure proved above remains an upper
+bound for ALL reachable nonterminal positions, whether winning or not.
 
 This is a rigorous interval, NOT an exact global total. Counting the
 unknown remaining positions and longer tactics is an open computational
