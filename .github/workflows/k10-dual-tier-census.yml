@@ -1,0 +1,39 @@
+name: Exact K10 Quixo two-color tier census
+on:
+  push:
+    branches: [research/exact-k10-dual-tier-census]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quixo-k10-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  exhaustive-k10:
+    runs-on: ubuntu-latest
+    timeout-minutes: 100
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Build previously validated exact per-(X,O)-tier solver
+        run: c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier.cpp -o /tmp/quixoforge-tiers
+      - name: Independently verify pinned census through K9
+        run: |
+          /usr/bin/time -v /tmp/quixoforge-tiers 9 > k9-recheck.jsonl
+          python tools/check_dual_tier_census.py k9-recheck.jsonl
+      - name: Exhaustively enumerate K10 with all same-tier move cycles
+        timeout-minutes: 90
+        run: |
+          /usr/bin/time -v /tmp/quixoforge-tiers 10 > census5-tier10.jsonl
+          python tools/check_dual_tier_census.py census5-tier10.jsonl
+      - name: Archive exact K10 census with K9 parity baseline
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quixoforge-dual-tier-K10-research
+          path: |
+            k9-recheck.jsonl
+            census5-tier10.jsonl
+          if-no-files-found: warn
