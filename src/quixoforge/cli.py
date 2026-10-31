@@ -1,6 +1,7 @@
 """Minimal headless CLI; no UI or services required."""
 import argparse
 import json
+from pathlib import Path
 from .model import initial, replay, Move, State, X, O
 from .reference import winner, legal_moves
 from .puzzles import Puzzle, audit
@@ -56,6 +57,20 @@ def main(argv=None):
     gen.add_argument("--min-plies", type=int, default=8)
     gen.add_argument("--max-plies", type=int, default=32)
     gen.add_argument("--allow-multiple", action="store_true")
+    bank = sub.add_parser("generate-bank", help="create a fully certified D4-deduplicated 5x5 puzzle bank")
+    bank.add_argument("--count", type=int, required=True)
+    bank.add_argument("--seed", type=int, required=True)
+    bank.add_argument("--depth", type=int, choices=range(1, 10), default=1)
+    bank.add_argument("--searches", type=int, default=100)
+    bank.add_argument("--attempts-per-search", type=int, default=100)
+    bank.add_argument("--min-plies", type=int, default=8)
+    bank.add_argument("--max-plies", type=int, default=32)
+    bank.add_argument("--allow-multiple", action="store_true")
+    bank.add_argument("--allow-shorter", action="store_true")
+    bank.add_argument("--output", required=True, type=Path)
+    check_bank = sub.add_parser("verify-bank", help="independently replay and verify all exported 5x5 puzzles")
+    check_bank.add_argument("--input", required=True, type=Path)
+    sub.add_parser("count-5x5", help="exact infinite game histories vs bounded finite puzzle-position counts")
     micro = sub.add_parser("micro", help="exact solved 3x3 Quixo tablebase; NOT the 5x5 game")
     micro.add_argument("--board", default=".........", help="nine row-major cells from .XO")
     micro.add_argument("--turn", choices=("X", "O"), default="X")
@@ -73,6 +88,33 @@ def main(argv=None):
     census.add_argument("--verify", action="store_true")
     sub.add_parser("bench", help="use python -m quixoforge.bench for configured runs")
     args = ap.parse_args(argv)
+    if args.command == "count-5x5":
+        from .game_counts import count_json
+        print(count_json())
+        return
+    if args.command == "generate-bank":
+        from .catalog import generate_bank, bank_json
+        dataset = generate_bank(count=args.count, seed=args.seed, depth=args.depth,
+                                unique=not args.allow_multiple,
+                                exact_horizon=not args.allow_shorter,
+                                searches=args.searches,
+                                attempts_per_search=args.attempts_per_search,
+                                min_plies=args.min_plies, max_plies=args.max_plies)
+        text = bank_json(dataset) + "\\n"
+        tmp = args.output.with_name(args.output.name + ".tmp")
+        tmp.write_text(text, encoding="utf8")
+        tmp.replace(args.output)
+        print(json.dumps({"output": str(args.output), "count": dataset["generated"],
+                          "depth": dataset["depth"], "unique": dataset["unique"],
+                          "exact_horizon": dataset["exact_horizon"]}, sort_keys=True))
+        return
+    if args.command == "verify-bank":
+        from .catalog import verify_bank
+        dataset = json.loads(args.input.read_text(encoding="utf8"))
+        verified = verify_bank(dataset)
+        print(json.dumps({"verified": verified, "status": "PASS",
+                          "input": str(args.input)}, sort_keys=True))
+        return
     if args.command == "census5-depth3":
         from .census5_forced3 import main as depth3_main
         depth3_main(["--verify"] if args.verify else [])
