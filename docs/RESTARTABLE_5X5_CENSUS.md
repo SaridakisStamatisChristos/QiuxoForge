@@ -33,8 +33,7 @@ cat prefix.jsonl middle.jsonl suffix.jsonl > completed.jsonl
 python tools/check_dual_tier_census.py completed.jsonl
 ```
 
-The example describes the supported commands; it is not a claim that
-K11 has been completed. Check that scratch space is sufficient first
+The example describes the supported commands; K11 subsequently completed in GitHub Actions run 41212014946. See EXACT_K11_CHECKPOINTED_CENSUS.md. Check that scratch space is sufficient first
 with `python tools/estimate_tier_scratch.py --cap 11`.
 
 ## Crash consistency and identity contract
@@ -50,8 +49,8 @@ with `python tools/estimate_tier_scratch.py --cap 11`.
    the staging directory is atomically renamed to `checkpoint-N`,
    and the containing directory is synchronized.
 4. Resume rejects missing files, symlinked bitmaps, size changes,
-   corrupted contents, incomplete manifests, invalid schema and cap
-   mismatches before processing *any* state.
+   corrupted contents, incomplete manifests, invalid schema, and cap
+   *reductions* before processing *any* state.
 5. A stopped or crashed run does NOT emit a final complete-census
    aggregate record. The original independent `check_dual_tier_census.py`
    rejects an incomplete JSONL transcript.
@@ -60,11 +59,19 @@ with `python tools/estimate_tier_scratch.py --cap 11`.
    FNV-1a is **not** a cryptographic authenticity mechanism. Snapshots
    should only be loaded from trusted user-controlled directories.
 
-The checkpoint manifest fixes the exact cap across resumes. To extend
-from K11 to K12, begin the K11 run with a target cap of **at least 12**,
-then checkpoint after K11. It is not valid to resume a cap=11 snapshot
-under cap=12 without recomputing the frontier: the cap=11 run skips
-occupancy-increasing edges out of K11.
+**Safe cap-extension theorem.** Every checkpoint is captured after
+processing an occupancy k strictly below the original cap C.
+The checkpoint therefore contains every successor with occupancy
+k+1, and no legal move decreases occupancy. By induction, any
+new requested cap C' ≥ C resumes the same exact state graph that
+an uninterrupted run to C' would traverse, including all within-tier
+cycles. Lower caps remain forbidden.
+
+In particular, the saved K12 frontier from the completed K11
+experiment (original cap=12) can be resumed under cap=13,
+allowing K12 completion and a K13 frontier **without replaying K11**.
+This is a new executable capability; it does not mean K12 has
+already been enumerated.
 
 ## Correctness verification
 
