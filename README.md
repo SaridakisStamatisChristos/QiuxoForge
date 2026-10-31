@@ -199,3 +199,25 @@ The scratch directory must exist and have adequate **free disk**.
 The runner aborts on failed allocations instead of publishing
 incomplete census results. This is not yet a restartable all-25-tier
 enumerator; see the [architecture and limits](docs/OUT_OF_CORE_CENSUS_ARCHITECTURE.md).
+
+## Exact K11 census and restartable K12 frontier
+
+The out-of-core algorithm has now enumerated **26,651,307,485**
+reachable raw 5×5 board/turn states through eleven occupied cubes:
+**3,332,049,627** D4 position classes, including
+**147,113,673** win-in-one classes and **52,994,624** classes
+with exactly one immediate winning first action. With the separate
+370 earlier certified non-immediate win-in-three classes, the
+lower bound is **147,114,043 distinct tactical puzzle classes**.
+The complete K12 starting frontier is archived from successful
+GitHub Actions run 41212014946.
+
+The K11 result passed checkpoint consistency validation but has
+not been independently re-enumerated by a second K11 algorithm.
+The full K0–K25 position and global puzzle counts remain unknown.
+See [K11 evidence](docs/EXACT_K11_CHECKPOINTED_CENSUS.md).
+
+To resume the saved K12 frontier and continue into the next
+occupancy, the checkpoint loader now supports a *safe upward
+occupancy cap extension*, validated against a full independent K7
+reference. No completed tiers need to be replayed.
