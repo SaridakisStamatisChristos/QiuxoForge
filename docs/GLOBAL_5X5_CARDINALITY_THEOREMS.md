@@ -31,6 +31,39 @@ tests/test_winning_histories_infinite.py.
 
 This does not imply infinitely many distinct board-position puzzles.
 
+## Theorem A2 — continuum-many infinite legal nonterminating games
+
+The word 'game' can also mean a potentially infinite legal action
+history, not a finite *completed* first-win history. We prove that there
+are exactly **2^(aleph_0)** different infinite legal nonterminating
+five-by-five games when repetitions do not trigger a house-rule draw.
+
+Starting from the empty X-first board, play the four legal moves
+24:U, 3:R, 20:R, 20:R. The result is a nonterminal X-turn board
+with top and bottom rows `...XO` and all other rows blank.
+
+Two distinct legal nonterminal *return-to-exact-root* cycles are:
+cycle A = [3:R, 3:R], shifting and then restoring the top row;
+cycle B = [23:R, 23:R], shifting and then restoring the bottom row.
+Every intermediate board is nonterminal and after either cycle the
+entire board *and turn* are exactly unchanged.
+
+For each infinite binary word b_0 b_1 ..., play cycle A when b_i=0
+and cycle B when b_i=1. Different binary words differ in their first
+different two-move block and hence define different infinite legal
+never-winning histories. This supplies an injection of the continuum
+into infinite legal games. Since all legal action sequences are
+subsets of infinite words over a finite action alphabet (44
+candidate elementary actions), there are at most continuum many.
+Thus the exact number of infinite legal nonterminal histories is
+the continuum. The exact number of finite first-win histories
+(theorem A) is only countably infinite.
+
+An executable certificate is
+`tests/test_infinite_play_cardinality.py` (independent legal replay).
+Neither infinite history count establishes the total number of
+different board-position puzzles, which is finite.
+
 ## Theorem B — exact structural terminal configurations across all 25 cubes
 
 Ignore physical-game reachability temporarily. Each of the 25 cells may be
