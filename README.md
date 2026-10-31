@@ -180,3 +180,22 @@ See [K9 exact enumeration](docs/EXACT_K9_REACHABLE_CENSUS.md) and
 
 See [generator and counting contracts](docs/GENERATOR_AND_GAME_COUNT.md)
 and [full-game cardinality theorems](docs/GLOBAL_5X5_CARDINALITY_THEOREMS.md).
+
+## Out-of-core census optimization (research)
+
+For larger 5x5 occupancy tiers, the new exact
+[external-memory enumerator](tools/census5_dual_tier_external.cpp)
+uses a disk-backed FIFO, lazily allocated mmap visited bitmaps,
+and immediately reclaims completed tiers. The original in-memory
+enumerator remains unchanged as an independent oracle.
+
+```sh
+c++ -std=c++17 -O3 tools/census5_dual_tier_external.cpp -o /tmp/quixo-ooc
+/tmp/quixo-ooc 8 /tmp > k8-out-of-core.jsonl
+python tools/check_dual_tier_census.py k8-out-of-core.jsonl
+```
+
+The scratch directory must exist and have adequate **free disk**.
+The runner aborts on failed allocations instead of publishing
+incomplete census results. This is not yet a restartable all-25-tier
+enumerator; see the [architecture and limits](docs/OUT_OF_CORE_CENSUS_ARCHITECTURE.md).

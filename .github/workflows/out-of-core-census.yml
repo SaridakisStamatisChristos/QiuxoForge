@@ -1,0 +1,64 @@
+name: Quixo out-of-core exact census differential
+on:
+  push:
+    branches: [research/k11-out-of-core-tier-engine]
+  pull_request:
+    paths:
+      - 'tools/census5_dual_tier_external.cpp'
+      - 'tools/check_external_equivalence.py'
+      - '.github/workflows/out-of-core-census.yml'
+permissions:
+  contents: read
+concurrency:
+  group: quixoforge-ooc-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  equivalence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Compile unchanged oracle and new external-memory engine
+        run: |
+          c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier.cpp -o /tmp/qf-old
+          c++ -std=c++17 -O3 -Wall -Wextra -pedantic tools/census5_dual_tier_external.cpp -o /tmp/qf-ooc
+      - name: Validate fail-closed scratch and occupancy input
+        run: |
+          if /tmp/qf-ooc 26 /tmp >/tmp/invalid.jsonl 2>/tmp/invalid.err; then
+            echo "Invalid cap unexpectedly succeeded" >&2; exit 1
+          fi
+          if /tmp/qf-ooc 4 /no/such/quixo/directory >/tmp/invalid.jsonl 2>/tmp/invalid.err; then
+            echo "Invalid scratch directory unexpectedly succeeded" >&2; exit 1
+          fi
+      - name: Independent exact differential K7 with time and RSS evidence
+        run: |
+          /usr/bin/time -v -o old-k7-resource.log /tmp/qf-old 7 > old-k7.jsonl
+          /usr/bin/time -v -o ooc-k7-resource.log /tmp/qf-ooc 7 /tmp > ooc-k7.jsonl
+          python tools/check_external_equivalence.py old-k7.jsonl ooc-k7.jsonl
+          python tools/check_dual_tier_census.py ooc-k7.jsonl
+      - name: Independent exhaustive K8 differential and resource benchmark
+        timeout-minutes: 18
+        run: |
+          /usr/bin/time -v -o old-k8-resource.log /tmp/qf-old 8 > old-k8.jsonl
+          /usr/bin/time -v -o ooc-k8-resource.log /tmp/qf-ooc 8 /tmp > ooc-k8.jsonl
+          python tools/check_external_equivalence.py old-k8.jsonl ooc-k8.jsonl
+          python tools/check_dual_tier_census.py ooc-k8.jsonl
+          python -c "import json; x=json.loads(open('ooc-k8.jsonl').read().splitlines()[-1]); assert x['peak_mapped_bitmap_bytes']>0 and x['peak_queue_disk_bytes']>0"
+      - name: Archive real old/new censuses and time/RSS benchmarks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quixoforge-ooc-differential-evidence
+          path: |
+            old-k7.jsonl
+            ooc-k7.jsonl
+            old-k8.jsonl
+            ooc-k8.jsonl
+            old-k7-resource.log
+            ooc-k7-resource.log
+            old-k8-resource.log
+            ooc-k8-resource.log
+          if-no-files-found: warn
