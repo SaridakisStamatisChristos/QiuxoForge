@@ -32,9 +32,18 @@ jobs:
       - name: End-to-end seeded puzzle generation and independent bank replay
         timeout-minutes: 5
         run: |
-          quixoforge generate-bank --count 1 --seed 42 --depth 1 --allow-multiple --searches 50 --attempts-per-search 120 --output /tmp/quixo-puzzle-bank.json
-          quixoforge verify-bank --input /tmp/quixo-puzzle-bank.json
+          quixoforge generate-bank --count 1 --seed 42 --depth 1 --allow-multiple --searches 50 --attempts-per-search 120 --output sample-puzzle-bank.json
+          quixoforge verify-bank --input sample-puzzle-bank.json
       - name: Explicit count query
         run: |
           quixoforge count-5x5 > counts.json
           python -c "import json; d=json.load(open('counts.json')); assert d['complete_winning_move_sequences']['cardinality']=='countably_infinite'; assert d['reachable_board_turn_positions']['global_exact'] is None"
+
+      - name: Export example certified puzzle and count JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: certified-5x5-example-${{ matrix.python-version }}
+          path: |
+            sample-puzzle-bank.json
+            counts.json
+          if-no-files-found: error
