@@ -100,7 +100,7 @@ def main(argv=None):
                                 searches=args.searches,
                                 attempts_per_search=args.attempts_per_search,
                                 min_plies=args.min_plies, max_plies=args.max_plies)
-        text = bank_json(dataset) + "\\n"
+        text = bank_json(dataset) + "\n"
         tmp = args.output.with_name(args.output.name + ".tmp")
         tmp.write_text(text, encoding="utf8")
         tmp.replace(args.output)
