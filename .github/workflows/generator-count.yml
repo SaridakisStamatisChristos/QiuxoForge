@@ -1,0 +1,35 @@
+name: Certified puzzle generator and count contracts
+on:
+  push:
+    branches:
+      - feature/certified-5x5-generator-and-game-count
+  pull_request:
+    paths:
+      - 'src/quixoforge/catalog.py'
+      - 'src/quixoforge/game_counts.py'
+      - 'src/quixoforge/cli.py'
+      - 'tests/test_certified_5x5_banks.py'
+      - 'tests/test_winning_histories_infinite.py'
+      - '.github/workflows/generator-count.yml'
+permissions:
+  contents: read
+jobs:
+  generator-contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.10', '3.13']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e '.[test]'
+      - name: Independent generator/bank/history contracts
+        run: python -m pytest -q tests/test_certified_5x5_banks.py tests/test_winning_histories_infinite.py
+      - name: Explicit count query
+        run: |
+          quixoforge count-5x5 > counts.json
+          python -c "import json; d=json.load(open('counts.json')); assert d['complete_winning_move_sequences']['cardinality']=='countably_infinite'; assert d['reachable_board_turn_positions']['global_exact'] is None"
