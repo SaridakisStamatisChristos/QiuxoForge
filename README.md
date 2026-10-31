@@ -144,3 +144,34 @@ An independent attacker/defender/attacker census over all ≤7-mark roots has al
 Existing Quixo tiering and strong-solving research predates this project (Tanaka et al., *Quixo Is Solved*, 2020; Robert Shi, Berkeley UCB/EECS-2024-139, 2024, Chapter 7.2). The novelty claim is limited to our particular *reachable tactical puzzle census and independently reproduced counts*; the two-color tier partition is **prior art**, not an invention of QuixoForge.
 
 The exact structural D4 generating function for all 25 occupancy layers is implemented in `tools/structural_orbit_bounds.py`. A proved two-color monotone recurrence that partitions the graph by X/O mark counts is documented at [Two-color layer saturation](docs/TWO_COLOR_LAYER_SATURATION_THEOREM.md). Neither is a claim that the full global puzzle count has been computed.
+
+
+## Certified 5×5 puzzle-bank generator and full-game count semantics
+
+QuixoForge supports creating **guaranteed playable** X-first 5×5
+tactical puzzle banks. Every exported puzzle has a legal move history,
+two independent bounded solver checks, a full defender-coverage proof,
+and a D4 symmetry identifier. Duplicates are rejected, and any search
+that cannot fill the requested bank fails rather than returning an
+incomplete catalogue.
+
+```bash
+pip install -e '.[test]'
+quixoforge count-5x5
+quixoforge generate-bank --count 2 --seed 42 --depth 1 --allow-multiple \
+    --searches 500 --attempts-per-search 100 --output puzzles.json
+quixoforge verify-bank --input puzzles.json
+```
+
+**How many games exist?** Complete legal first-win move histories are
+**countably infinite** if repeated nonterminal positions are allowed.
+The number of distinct *reachable* game positions is **finite but
+not globally computed**. Through eight occupied cubes, the existing
+research has independently counted **603,033,221** raw reachable
+board-and-turn states, **75,434,676** geometric classes, and
+**698,958** certified distinct forced-win puzzle classes from the
+one- and three-ply families. These are bounded-domain results,
+**not the total number of possible 5×5 puzzles**.
+
+See [generator and counting contracts](docs/GENERATOR_AND_GAME_COUNT.md)
+and [full-game cardinality theorems](docs/GLOBAL_5X5_CARDINALITY_THEOREMS.md).
